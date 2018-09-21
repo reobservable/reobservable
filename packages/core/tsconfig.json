@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+      "sourceMap": true,
+      "moduleResolution": "node",
+      "declaration": true,
+      "target": "es5",
+      "lib": [
+        "es6"
+      ],
+      "types": [
+        "node",
+        "mocha"
+      ]
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "./test/**/*",
+    "**/*.spec.ts"
+  ]
+}

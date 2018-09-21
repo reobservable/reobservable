@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "noImplicitAny": false,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@config/*": ["./config/*"],
+      "@components/*": ["./components/*"],
+      "@utils/*": ["./utils/*"],
+      "@modules/*": ["./modules/*"],
+      "@models/*": ["./models/*"],
+      "@services/*": ["./services/*"]
+    },
+    "lib": [
+      "es2015",
+      "es6",
+      "dom",
+      "dom.iterable"
+    ],
+    "jsx": "react",
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
+}
