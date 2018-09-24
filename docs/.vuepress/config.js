@@ -18,6 +18,7 @@ module.exports = {
             collapsable: false,
             children: [
               '',
+              'installation',
               'architecture'
             ]
           }],
@@ -26,7 +27,9 @@ module.exports = {
             collapsable: false,
             children: [
               '',
-              'flow'
+              'service',
+              'error',
+              'loading'
             ]
           }]
         }

@@ -10,6 +10,7 @@
 - [x] support service error
 - [x] support custom redux config
 - [x] support action type alias
+- [ ] support global `state$` observing
 
 ## ecosystem
 
