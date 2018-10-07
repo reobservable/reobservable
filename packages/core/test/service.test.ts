@@ -330,7 +330,7 @@ describe('service', () => {
       payload: { name: 'john' }
     })
     setTimeout(() => {
-      expect(spy.calledOnce).to.equal(true)
+      expect(spy.calledOnce).to.be.true
       spy.restore()
       done()
     }, 10)
@@ -344,7 +344,7 @@ describe('service', () => {
       payload: { name: 'john' }
     })
     setTimeout(() => {
-      expect(spy.calledOnce).to.equal(true)
+      expect(spy.calledOnce).to.be.true
       spy.restore()
       done()
     }, 10)
@@ -357,7 +357,7 @@ describe('service', () => {
       type: 'user/fetch'
     })
     setTimeout(() => {
-      expect(spy.notCalled).to.equal(true)
+      expect(spy.notCalled).to.be.true
       spy.restore()
       done()
     }, 10)
@@ -372,7 +372,7 @@ describe('service', () => {
       type: 'user/follow'
     })
     setTimeout(() => {
-      expect(spy.calledOnce).to.equal(true)
+      expect(spy.calledOnce).to.be.true
       expect(spy.returnValues[0]).to.equal('follow tom success')
       spy.restore()
       done()
@@ -389,9 +389,95 @@ describe('service', () => {
       type: 'user/follow'
     })
     setTimeout(() => {
-      expect(spy.calledOnce).to.equal(true)
+      expect(spy.calledOnce).to.be.true
       expect(spy.returnValues[0]).to.equal('Error: unknown error')
       spy.restore()
+      done()
+    }, 10)
+  })
+
+  it('should support custom success predicate function', (done) => {
+    const service: ServiceConfig<AxiosResponse, AxiosError> = {
+      isSuccess: resp => resp.data.code !== -1,
+      errorSelector: resp => resp.data.message
+    }
+    store = init({
+      models: { user },
+      services: {
+        api: service
+      }
+    })
+    nock(/api\.com/).post(/users\/follow/).reply(200, {
+      code: -1,
+      message: 'unknown error'
+    })
+    nock(/api\.com/).get(/users/).reply(200, {
+      code: 1,
+      message: ''
+    })
+    store.dispatch({
+      type: 'user/follow'
+    })
+    store.dispatch({
+      type: 'user/fetch'
+    })
+    setTimeout(() => {
+      const error = store.getState().error
+      expect(error).to.deep.include({
+        services: {
+          'user/follow': 'unknown error',
+          'user/fetch': null
+        }
+      })
+      done()
+    }, 10)
+  })
+
+  it('should support default error selector when service.isSuccess has been set', (done) => {
+    const service: ServiceConfig<AxiosResponse, AxiosError> = {
+      isSuccess: resp => resp.data.code !== -1
+    }
+    store = init({
+      models: { user },
+      services: {
+        api: service
+      }
+    })
+    nock(/api\.com/).post(/users\/follow/).reply(200, {
+      code: -1,
+      message: 'unknown error'
+    })
+    store.dispatch({
+      type: 'user/follow'
+    })
+    setTimeout(() => {
+      const error = store.getState().error
+      expect(error).to.deep.include({
+        services: {
+          'user/follow': 'error'
+        }
+      })
+      done()
+    }, 10)
+  })
+
+  it('should support default error selector when service.isSuccess has not been set', (done) => {
+    store = init({
+      models: { user },
+      services: {
+        api: { ...apiService, errorSelector: null }
+      }
+    })
+    nock(/api\.com/).post(/users\/follow/).replyWithError({
+      code: -1,
+      message: 'unknown error'
+    })
+    store.dispatch({
+      type: 'user/follow'
+    })
+    setTimeout(() => {
+      const error = store.getState().error
+      expect(error.services['user/follow']).not.empty
       done()
     }, 10)
   })

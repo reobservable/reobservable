@@ -5,9 +5,10 @@
  */
 import { expect } from 'chai'
 import { Store } from 'redux'
-import { map, tap } from 'rxjs/operators'
+import { map, delay } from 'rxjs/operators'
 import { init } from '../src'
 import Model from '../src/types/Model'
+import end from '../src/operators/end'
 
 interface UserState {
   list: User[],
@@ -71,7 +72,8 @@ const post: Model<PostState> = {
   flows: {
     fetch(flow$) {
       return flow$.pipe(
-        map(() => ({
+        delay(10),
+        end(() => ({
           type: 'post/fetchSuccess',
           payload: {
             list: [{
@@ -97,6 +99,27 @@ describe('flow', () => {
   }
 
   beforeEach(initStore)
+
+  it('should set loading true when flow start', () => {
+    store.dispatch({
+      type: 'post/fetch'
+    })
+
+    const loading = store.getState().loading
+    expect(loading.flows['post/fetch']).to.be.true
+  })
+
+  it('should set loading false when flow end', (done) => {
+    store.dispatch({
+      type: 'post/fetch'
+    })
+
+    setTimeout(() => {
+      const loading = store.getState().loading
+      expect(loading.flows['post/fetch']).to.be.false
+      done()
+    }, 20)
+  })
 
   it('should catch flow error', () => {
     store.dispatch({
@@ -129,7 +152,7 @@ describe('flow', () => {
     expect(error.flows['user/throwError']).to.be.null
   })
 
-  it('should not stop when any flow else throw error', () => {
+  it('should not stop current flow when other flow throw error', (done) => {
     store.dispatch({
        type: 'user/throwError'
     })
@@ -138,7 +161,10 @@ describe('flow', () => {
       type: 'post/fetch'
     })
 
-    const state = store.getState()
-    expect(state.post.list).to.not.empty
+    setTimeout(() => {
+      const state = store.getState()
+      expect(state.post.list).to.not.empty
+      done()
+    }, 20)
   })
 })

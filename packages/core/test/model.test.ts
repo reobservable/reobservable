@@ -114,6 +114,22 @@ describe('model', () => {
     })
   }
 
+  describe('#init', () => {
+    it('should throw error when model name conflicted', () => {
+      expect(function() {
+        init({
+          models: {
+            user,
+            user2: {
+              name: 'user',
+              state: {}
+            }
+          }
+        })
+      }).to.throw('model user has been defined')
+    })
+  })
+
   describe('#state', () => {
     beforeEach(initStore)
 

@@ -17,7 +17,7 @@ interface ServiceTemplates<T, E> {
 }
 
 export interface ServiceConfig<T, E> {
-  templates: ServiceTemplates<T, E>,
+  templates?: ServiceTemplates<T, E>,
   isSuccess?: (resp: T) => boolean
   errorSelector?: (error: any) => any
 }
@@ -55,7 +55,7 @@ export default function createFromService<T, E>(notification: Notification, serv
    * @param service
    * @param options
    */
-  return function service(serviceName, service, options = { level: LEVEL.silent}) {
+  return function service(serviceName, service, options = { level: LEVEL.silent }) {
     store.dispatch({
       type: SERVICE_LOADING_START_ACTION,
       payload: {
@@ -69,7 +69,7 @@ export default function createFromService<T, E>(notification: Notification, serv
     const errorNotificate = (err: E) => level >= LEVEL.error &&
       notification.error(error(err))
 
-    const response$ = typeof serviceConfig.isSuccess === 'function'
+    const response$ = (typeof serviceConfig.isSuccess) === 'function'
     ? from(service).pipe(
         map(resp => {
           if (serviceConfig.isSuccess(resp)) {
@@ -90,6 +90,7 @@ export default function createFromService<T, E>(notification: Notification, serv
           })
         })
       )
+
     const [success$, error$]: Observable<Result<T, E>>[] = partition<Result<T, E>>(
       response$,
       (({success}) => success)
