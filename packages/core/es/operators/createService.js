@@ -38,7 +38,7 @@ export default function createFromService(notification, serviceConfig, store) {
             notification.success(success(resp)); };
         var errorNotificate = function (err) { return level >= LEVEL.error &&
             notification.error(error(err)); };
-        var response$ = typeof serviceConfig.isSuccess === 'function'
+        var response$ = (typeof serviceConfig.isSuccess) === 'function'
             ? from(service).pipe(map(function (resp) {
                 if (serviceConfig.isSuccess(resp)) {
                     return { resp: resp, success: true };

@@ -1,5 +1,5 @@
 /**
- * 模型测试
+ * model test
  * @author yoyoyohamapi
  * @ignore created 2018-08-14 19:12:12
  */
@@ -113,22 +113,6 @@ describe('model', () => {
       models: { user, post }
     })
   }
-
-  describe('#init', () => {
-    it('should throw error when model name conflicted', () => {
-      expect(function() {
-        init({
-          models: {
-            user,
-            user2: {
-              name: 'user',
-              state: {}
-            }
-          }
-        })
-      }).to.throw('model user has been defined')
-    })
-  })
 
   describe('#state', () => {
     beforeEach(initStore)

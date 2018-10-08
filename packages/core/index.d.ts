@@ -1,7 +1,7 @@
 import { Middleware, Reducer, Store } from 'redux'
 import Model, { Selectors } from './src/types/model'
 import { Notification } from './src/types/Notification'
-import { init, getSelectors, getService, NOTIFICATION_LEVEL } from './src'
+import { init, getSelectors, getService, NOTIFICATION_LEVEL, notificate } from './src'
 import * as Symbols from './src/constants/symbols'
 import { ServiceConfig, ServiceFunc } from './src/operators/createService'
 
@@ -12,7 +12,8 @@ export {
   Notification, 
   init, 
   getSelectors,
-  getService, 
+  getService,
+  notificate,
   ServiceConfig, 
   ServiceFunc,
   NOTIFICATION_LEVEL,

@@ -41,7 +41,7 @@ function createFromService(notification, serviceConfig, store) {
             notification.success(success(resp)); };
         var errorNotificate = function (err) { return level >= notification_1.LEVEL.error &&
             notification.error(error(err)); };
-        var response$ = typeof serviceConfig.isSuccess === 'function'
+        var response$ = (typeof serviceConfig.isSuccess) === 'function'
             ? rxjs_1.from(service).pipe(operators_1.map(function (resp) {
                 if (serviceConfig.isSuccess(resp)) {
                     return { resp: resp, success: true };

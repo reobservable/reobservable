@@ -5,7 +5,7 @@ import { ALIAS } from '../constants/symbols';
  * @param {Action} action
  */
 export function getPayload(action) {
-    return isNil(action) ? {} : action.payload;
+    return isNil(action.payload) ? {} : action.payload;
 }
 /**
  * action sanitizer for redux-dev-tools

@@ -11,7 +11,7 @@ interface ServiceTemplates<T, E> {
     error: (error: E) => string;
 }
 export interface ServiceConfig<T, E> {
-    templates: ServiceTemplates<T, E>;
+    templates?: ServiceTemplates<T, E>;
     isSuccess?: (resp: T) => boolean;
     errorSelector?: (error: any) => any;
 }

@@ -7,7 +7,7 @@ var symbols_1 = require("../constants/symbols");
  * @param {Action} action
  */
 function getPayload(action) {
-    return logic_1.isNil(action) ? {} : action.payload;
+    return logic_1.isNil(action.payload) ? {} : action.payload;
 }
 exports.getPayload = getPayload;
 /**
