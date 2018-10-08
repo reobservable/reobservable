@@ -14,7 +14,7 @@
     "lint": "lerna run lint",
     "bootstrap": "lerna bootstrap --hoist",
     "publish": "lerna publish",
-    "test": "lerna run test --loglevel silent",
+    "test": "nyc --reporter=text mocha --opts mocha.opts",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs"
   },
@@ -51,5 +51,22 @@
   },
   "pre-commit": [
     "lint"
-  ]
+  ],
+  "nyc": {
+    "extension": [
+      ".ts"
+    ],
+    "include": [
+      "packages/**/src/**/*.ts"
+    ],
+    "exclude": [
+      "**/*.d.ts"
+    ],
+    "reporter": [
+      "text-summary",
+      "html"
+    ],
+    "sourceMap": true,
+    "instrument": true
+  }
 }

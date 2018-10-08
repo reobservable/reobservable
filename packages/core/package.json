@@ -6,7 +6,6 @@
   "module": "./es/index.js",
   "scripts": {
     "lint": "tslint src/**/*.ts",
-    "test": "nyc --reporter=text mocha",
     "build:cjs": "cross-env tsc --rootDir ./src --outDir lib --module commonjs",
     "build:es": "cross-env tsc --rootDir ./src --outDir es --module es6",
     "clean": "rimraf lib es dist",
@@ -28,22 +27,5 @@
   "sideEffects": false,
   "devDependencies": {
     "axios": "^0.18.0"
-  },
-  "nyc": {
-    "extension": [
-      ".ts"
-    ],
-    "include": [
-      "src/**/*/*.ts"
-    ],
-    "exclude": [
-      "**/*.d.ts"
-    ],
-    "reporter": [
-      "text-summary",
-      "html"
-    ],
-    "sourceMap": true,
-    "instrument": true
   }
 }
