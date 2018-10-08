@@ -28,6 +28,7 @@ import { noop } from './utils/function'
 import { LEVEL as NOTIFICATION_LEVEL } from './constants/notification'
 
 import * as Symbols from './constants/symbols'
+import { isNil } from './utils/logic'
 
 interface Models {
   [modelName: string]: Model<any>
@@ -39,7 +40,7 @@ interface ReduxConfig {
 }
 
 interface Config {
-  models: Models,
+  models?: Models,
   redux?: ReduxConfig,
   notification?: Notification,
   services?: {
@@ -55,7 +56,7 @@ const services: {
   [stringName: string]: ServiceFunc<any, any>
 } = {}
 
-const defaultNotification: Notification = {
+let notification: Notification = {
   info: noop,
   success: noop,
   error: noop,
@@ -73,7 +74,11 @@ const composeEnhancers = composeWithDevTools({
 })
 
 export const init: InitFunc = (config) => {
-  const { models = {}, redux = {}, notification = defaultNotification } = config
+  const { models = {}, redux = {} } = config
+  notification = {
+    ...notification,
+    ...(config.notification || {}),
+  }
 
   const epics = []
 
@@ -88,7 +93,7 @@ export const init: InitFunc = (config) => {
    */
   const createReducer = (model: Model<any>) => {
     invariant(!reducers.hasOwnProperty(model.name), `model ${model.name} has been defined`)
-    reducers[model.name] = function(state = model.state || {}, action: Action) {
+    reducers[model.name] = function(state = model.state, action: Action) {
       const { type } = action
       const payload = getPayload(action)
       switch (type) {
@@ -187,7 +192,7 @@ export const init: InitFunc = (config) => {
     }
     createReducer(model)
     createFlows(model)
-    selectors[model.name] = model.selectors || {}
+    selectors[model.name] = model.selectors
   })
 
   // 配置 redux
@@ -233,6 +238,12 @@ export function getSelectors(model: string) {
 
 export function getService(service: string) {
   return services[service]
+}
+
+export function notificate(type: string, message: any) {
+  if (!isNil(message)) {
+    return (notification[type] || notification.info)(message)
+  }
 }
 
 export { NOTIFICATION_LEVEL, Symbols }

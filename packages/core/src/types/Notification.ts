@@ -8,10 +8,10 @@ import { LEVEL } from '../constants/notification'
 type notificate = (content: string, duration?: number) => void
 
 export interface Notification {
-  info: notificate,
-  success: notificate,
-  warn: notificate,
-  error: notificate
+  info?: notificate,
+  success?: notificate,
+  warn?: notificate,
+  error?: notificate
 }
 
 export enum NotificationLevel {
