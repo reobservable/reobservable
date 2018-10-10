@@ -1,11 +1,11 @@
 {
   "name": "reobservable",
   "version": "0.1.0",
-  "description": "",
+  "description": "Redux + rxjs + redux-obersvable best practice",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/reobservable/reobservable"
   },
   "directories": {
     "example": "examples"
