@@ -1,6 +1,6 @@
 {
   "name": "@reobservable/examples",
-  "version": "0.1.3",
+  "version": "0.1.1",
   "description": "",
   "main": "index.js",
   "directories": {
@@ -13,7 +13,7 @@
   "author": " <yoyoyohamapi softshot37@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "@reobservable/core": "^0.1.3",
+    "@reobservable/core": "^0.1.1",
     "antd": "^3.7.0",
     "axios": "^0.18.0",
     "connected-react-router": "^4.3.0",
@@ -45,5 +45,8 @@
     "webpack": "^4.16.1",
     "webpack-cli": "^3.0.8",
     "webpack-dev-server": "^3.1.4"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
