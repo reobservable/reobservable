@@ -68,5 +68,8 @@
     ],
     "sourceMap": true,
     "instrument": true
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

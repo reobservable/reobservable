@@ -199,7 +199,8 @@ export const init: InitFunc = (config) => {
   const epicMiddleware = createEpicMiddleware({
     dependencies: {
       end,
-      endTo
+      endTo,
+      services
     }
   })
 

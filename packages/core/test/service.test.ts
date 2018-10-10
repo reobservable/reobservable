@@ -93,8 +93,7 @@ const user: Model<UserState, {user: UserState}> = {
         })
       )
     },
-    rename(flow$) {
-      const api = getService('api')
+    rename(flow$, action$, state$, {services: { api }}) {
       return flow$.pipe(
         switchMap(({payload}) => {
           const [success$, error$] = api(

@@ -37,9 +37,10 @@ var notification_1 = require("./constants/notification");
 exports.NOTIFICATION_LEVEL = notification_1.LEVEL;
 var Symbols = require("./constants/symbols");
 exports.Symbols = Symbols;
+var logic_1 = require("./utils/logic");
 var selectors = {};
 var services = {};
-var defaultNotification = {
+var notification = {
     info: function_1.noop,
     success: function_1.noop,
     error: function_1.noop,
@@ -54,7 +55,8 @@ var composeEnhancers = redux_devtools_extension_1.composeWithDevTools({
     actionSanitizer: action_1.actionSanitizer
 });
 exports.init = function (config) {
-    var _a = config.models, models = _a === void 0 ? {} : _a, _b = config.redux, redux = _b === void 0 ? {} : _b, _c = config.notification, notification = _c === void 0 ? defaultNotification : _c;
+    var _a = config.models, models = _a === void 0 ? {} : _a, _b = config.redux, redux = _b === void 0 ? {} : _b;
+    notification = __assign({}, notification, (config.notification || {}));
     var epics = [];
     var reducers = {
         loading: loading_1.default,
@@ -67,7 +69,7 @@ exports.init = function (config) {
     var createReducer = function (model) {
         invariant(!reducers.hasOwnProperty(model.name), "model " + model.name + " has been defined");
         reducers[model.name] = function (state, action) {
-            if (state === void 0) { state = model.state || {}; }
+            if (state === void 0) { state = model.state; }
             var type = action.type;
             var payload = action_1.getPayload(action);
             switch (type) {
@@ -139,13 +141,14 @@ exports.init = function (config) {
         var model = __assign({ reducers: {}, selectors: {}, flows: {}, state: {} }, models[key]);
         createReducer(model);
         createFlows(model);
-        selectors[model.name] = model.selectors || {};
+        selectors[model.name] = model.selectors;
     });
     // 配置 redux
     var epicMiddleware = redux_observable_1.createEpicMiddleware({
         dependencies: {
             end: end_1.default,
-            endTo: endTo_1.default
+            endTo: endTo_1.default,
+            services: services
         }
     });
     var extraMiddleware = redux.middleware
@@ -173,4 +176,10 @@ function getService(service) {
     return services[service];
 }
 exports.getService = getService;
+function notificate(type, message) {
+    if (!logic_1.isNil(message)) {
+        return (notification[type] || notification.info)(message);
+    }
+}
+exports.notificate = notificate;
 //# sourceMappingURL=index.js.map

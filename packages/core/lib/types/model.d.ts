@@ -30,7 +30,7 @@ export interface Selectors<T> {
 }
 export default interface Model<S, R = any> {
     readonly name: string;
-    readonly state: S;
+    readonly state?: S;
     readonly reducers?: Reducers<S>;
     readonly flows?: Flows<R>;
     readonly selectors?: Selectors<R>;

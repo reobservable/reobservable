@@ -12,7 +12,7 @@ interface ReduxConfig {
     rootReducer?: (reducer: Reducer) => Reducer;
 }
 interface Config {
-    models: Models;
+    models?: Models;
     redux?: ReduxConfig;
     notification?: Notification;
     services?: {
@@ -23,4 +23,5 @@ export declare type InitFunc = (config: Config) => Store;
 export declare const init: InitFunc;
 export declare function getSelectors(model: string): Selectors<any>;
 export declare function getService(service: string): ServiceFunc<any, any>;
+export declare function notificate(type: string, message: any): any;
 export { NOTIFICATION_LEVEL, Symbols };
