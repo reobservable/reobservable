@@ -1,6 +1,6 @@
 {
   "name": "@reobservable/core",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "reobservable core package",
   "main": "./lib/index.js",
   "module": "./es/index.js",
