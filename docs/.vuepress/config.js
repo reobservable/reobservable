@@ -18,7 +18,7 @@ module.exports = {
             collapsable: false,
             children: [
               '',
-              'installation',
+              'get-started',
               'architecture'
             ]
           }],
