@@ -34,10 +34,10 @@ export interface Flows<R> {
   readonly [flowName: string]: Flow<R>
 }
 
-export type Selector<T> = (state: T) => any
+export type Selector<T, P = any> = (state: T, props?: P) => any
 
-export interface Selectors<T> {
-  readonly [selectorName: string]: Selector<T>
+export interface Selectors<T, P = any> {
+  readonly [selectorName: string]: Selector<T, P>
 }
 
 export default interface Model<S, R = any> {
