@@ -1,6 +1,6 @@
 {
   "name": "@reobservable/examples",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "",
   "main": "index.js",
   "directories": {
@@ -13,7 +13,7 @@
   "author": " <yoyoyohamapi softshot37@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "@reobservable/core": "^0.1.9",
+    "@reobservable/core": "^0.1.10",
     "antd": "^3.7.0",
     "axios": "^0.18.0",
     "connected-react-router": "^4.3.0",
