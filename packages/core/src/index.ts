@@ -160,7 +160,7 @@ export const init: InitFunc = (config) => {
             }
           }),
           catchError((error) => {
-            console.error('Flow error', error)
+            console.error(`@reobservable[flow ${actionType} error]`, error)
             return of({
               type: ERROR_SET_ACTION,
               payload: { flow: actionType, error: error }

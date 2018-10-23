@@ -115,6 +115,7 @@ export var init = function (config) {
                     return of(action);
                 }
             }), catchError(function (error) {
+                console.error("@reobservable[flow " + actionType + " error]", error);
                 return of({
                     type: ERROR_SET_ACTION,
                     payload: { flow: actionType, error: error }

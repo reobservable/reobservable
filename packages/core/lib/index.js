@@ -119,6 +119,7 @@ exports.init = function (config) {
                     return rxjs_1.of(action);
                 }
             }), operators_1.catchError(function (error) {
+                console.error("@reobservable[flow " + actionType + " error]", error);
                 return rxjs_1.of({
                     type: actionTypes_1.ERROR_SET_ACTION,
                     payload: { flow: actionType, error: error }
