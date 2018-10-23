@@ -24,9 +24,9 @@ export declare type Flow<S = any> = (flow$: ActionsObservable<Action>, action$: 
 export interface Flows<R> {
     readonly [flowName: string]: Flow<R>;
 }
-export declare type Selector<T> = (state: T) => any;
-export interface Selectors<T> {
-    readonly [selectorName: string]: Selector<T>;
+export declare type Selector<T, P = any> = (state: T, props?: P) => any;
+export interface Selectors<T, P = any> {
+    readonly [selectorName: string]: Selector<T, P>;
 }
 export default interface Model<S, R = any> {
     readonly name: string;
