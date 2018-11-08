@@ -1,6 +1,6 @@
 {
   "name": "@reobservable/examples",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "",
   "main": "index.js",
   "directories": {
@@ -11,9 +11,9 @@
     "start:todo": "cross-env webpack --config ./todo/webpack.config.js --mode=development"
   },
   "author": " <yoyoyohamapi softshot37@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
-    "@reobservable/core": "^0.1.12",
+    "@reobservable/core": "^0.1.13",
     "antd": "^3.7.0",
     "axios": "^0.18.0",
     "connected-react-router": "^4.3.0",

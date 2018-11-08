@@ -1,6 +1,6 @@
 {
   "name": "@reobservable/core",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "reobservable core package",
   "main": "./lib/index.js",
   "module": "./es/index.js",
@@ -13,7 +13,7 @@
   },
   "typings": "index.d.ts",
   "author": " <yoyoyohamapi softshot37@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "invariant": "^2.2.4",
     "lodash.clonedeep": "^4.5.0",
