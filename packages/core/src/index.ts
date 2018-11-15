@@ -104,14 +104,14 @@ export const init: InitFunc = (config) => {
           return mergeWith(cloneDeep(state), payload, patchWith)
         }
         default: {
-          if (typeof model.reducers[type] === 'function') {
-            return model.reducers[type](state, payload)
-          }
-
           const [_, reducerName] = type.split('/')
 
           if (typeof model.reducers[reducerName] === 'function') {
             return model.reducers[reducerName](state, payload)
+          }
+
+          if (typeof model.reducers[type] === 'function') {
+            return model.reducers[type](state, payload)
           }
 
           return state
