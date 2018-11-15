@@ -400,6 +400,7 @@ describe('service', () => {
       isSuccess: resp => resp.data.code !== -1,
       errorSelector: resp => resp.data.message
     }
+    const spy = sinon.spy(service, 'isSuccess')
     store = init({
       models: { user },
       services: {
@@ -422,6 +423,7 @@ describe('service', () => {
     })
     setTimeout(() => {
       const error = store.getState().error
+      expect(spy.calledTwice).to.be.true
       expect(error).to.deep.include({
         services: {
           'user/follow': 'unknown error',

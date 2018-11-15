@@ -4,7 +4,7 @@
  * @ignore created 2018-08-13 14:26:55
  */
 import { from, of, Observable } from 'rxjs'
-import { catchError, map, filter, tap } from 'rxjs/operators'
+import { catchError, map, filter, tap, shareReplay } from 'rxjs/operators'
 import { Store } from 'redux'
 import { Notification, NotificationLevel } from '../types/notification'
 import { LEVEL } from '../constants/notification'
@@ -38,10 +38,10 @@ interface Result<T, E> {
 export type ServiceFunc<T, E> = (serviceName: string, service: Promise<T>, options?: ServiceOptions<T, E>) =>
   [Observable<Result<T, E>>, Observable<Result<T, E>>]
 
-export function partition<T>(source: Observable<T>, predicate: (value: T, index: number) => boolean) {
+export function partition<T>(source$: Observable<T>, predicate: (value: T, index: number) => boolean) {
   return [
-    source.pipe(filter(predicate)),
-    source.pipe(filter((v, i) => !predicate(v, i))),
+    source$.pipe(filter(predicate)),
+    source$.pipe(filter((v, i) => !predicate(v, i))),
   ]
 }
 
@@ -92,7 +92,7 @@ export default function createFromService<T, E>(notification: Notification, serv
       )
 
     const [success$, error$]: Observable<Result<T, E>>[] = partition<Result<T, E>>(
-      response$,
+      response$.pipe(shareReplay(1)),
       (({success}) => success)
     )
 
