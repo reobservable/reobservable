@@ -12,7 +12,7 @@ import { Observable } from 'rxjs'
 import { ServiceFunc } from '../operators/createService'
 
 export interface Reducers<S> {
-  readonly [reducerName: string]: Reducer<S>
+  readonly [reducerName: string]: (state: S, payload: any) => S
 }
 
 export interface Dependencies<T = any, E = any> {
