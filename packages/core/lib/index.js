@@ -80,8 +80,8 @@ exports.init = function (config) {
                     return mergeWith(cloneDeep(state), payload, patchWith);
                 }
                 default: {
-                    var _a = type.split('/'), _ = _a[0], reducerName = _a[1];
-                    if (typeof model.reducers[reducerName] === 'function') {
+                    var _a = type.split('/'), modelName = _a[0], reducerName = _a[1];
+                    if (modelName === model.name && typeof model.reducers[reducerName] === 'function') {
                         return model.reducers[reducerName](state, payload);
                     }
                     if (typeof model.reducers[type] === 'function') {

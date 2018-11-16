@@ -4,14 +4,14 @@
  * @ignore created 2018-08-13 14:26:55
  */
 import { from, of } from 'rxjs';
-import { catchError, map, filter, tap } from 'rxjs/operators';
+import { catchError, map, filter, tap, shareReplay } from 'rxjs/operators';
 import { LEVEL } from '../constants/notification';
 import { SERVICE_ERROR_SET_ACTION, SERVICE_LOADING_END_ACTION, SERVICE_LOADING_START_ACTION } from '../constants/actionTypes';
 import { noop } from '../utils/function';
-export function partition(source, predicate) {
+export function partition(source$, predicate) {
     return [
-        source.pipe(filter(predicate)),
-        source.pipe(filter(function (v, i) { return !predicate(v, i); })),
+        source$.pipe(filter(predicate)),
+        source$.pipe(filter(function (v, i) { return !predicate(v, i); })),
     ];
 }
 /**
@@ -55,7 +55,7 @@ export default function createFromService(notification, serviceConfig, store) {
                     error: serviceConfig.errorSelector ? serviceConfig.errorSelector(error) : error
                 });
             }));
-        var _d = partition(response$, (function (_a) {
+        var _d = partition(response$.pipe(shareReplay(1)), (function (_a) {
             var success = _a.success;
             return success;
         })), success$ = _d[0], error$ = _d[1];

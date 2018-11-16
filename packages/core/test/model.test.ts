@@ -6,6 +6,7 @@
 import { Store } from 'redux'
 import { mapTo } from 'rxjs/operators'
 import { expect } from 'chai'
+import * as sinon from 'sinon'
 import { init, getSelectors } from '../src'
 import Model from '../src/types/Model'
 
@@ -60,6 +61,9 @@ const user: Model<UserState, {user: UserState}> = {
     'post/create': function (state, payload) {
       const { id } = payload
       return { ...state, editingPost: id }
+    },
+    init(state, payload) {
+      return state
     }
   },
   selectors: {
@@ -99,7 +103,9 @@ const post: Model<PostState> = {
     current: null
    },
    reducers: {
-
+    init(state, payload) {
+      return state
+    }
    },
    flows: {
    }
@@ -172,6 +178,17 @@ describe('model', () => {
       ])
       expect(pagination.total).to.equal(20)
     })
+
+    it('should match model reducer correctly', () => {
+      const spyUserInit = sinon.spy(user.reducers, 'init')
+      const spyPostInit = sinon.spy(post.reducers, 'init')
+      store.dispatch({
+        type: 'user/init'
+      })
+      expect(spyUserInit.calledOnce).to.be.true
+      expect(spyPostInit.notCalled).to.be.true
+    })
+
     it('should support declare reducers of others', () => {
       store.dispatch({
         type: 'post/create',
@@ -182,6 +199,7 @@ describe('model', () => {
       const { editingPost } = store.getState().user
       expect(editingPost).to.equal(1)
     })
+
     it('should have change reducer', () => {
       store.dispatch({
         type: 'user/change',
@@ -192,6 +210,7 @@ describe('model', () => {
       const { current } = store.getState().user
       expect(current).to.equal(1)
     })
+
     it('should have patch reducer', () => {
       store.dispatch({
         type: 'user/patch',
@@ -216,6 +235,7 @@ describe('model', () => {
 
   describe('#selectors', () => {
     beforeEach(initStore)
+
     it('should create selectors', () => {
      store.dispatch({
        type: 'user/fetch'

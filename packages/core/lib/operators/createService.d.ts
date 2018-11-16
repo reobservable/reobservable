@@ -27,7 +27,7 @@ interface Result<T, E> {
     success?: boolean | undefined;
 }
 export declare type ServiceFunc<T, E> = (serviceName: string, service: Promise<T>, options?: ServiceOptions<T, E>) => [Observable<Result<T, E>>, Observable<Result<T, E>>];
-export declare function partition<T>(source: Observable<T>, predicate: (value: T, index: number) => boolean): Observable<T>[];
+export declare function partition<T>(source$: Observable<T>, predicate: (value: T, index: number) => boolean): Observable<T>[];
 /**
  * 创建 fromService creator
  * @param {Notification} notification

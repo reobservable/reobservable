@@ -10,10 +10,10 @@ var operators_1 = require("rxjs/operators");
 var notification_1 = require("../constants/notification");
 var actionTypes_1 = require("../constants/actionTypes");
 var function_1 = require("../utils/function");
-function partition(source, predicate) {
+function partition(source$, predicate) {
     return [
-        source.pipe(operators_1.filter(predicate)),
-        source.pipe(operators_1.filter(function (v, i) { return !predicate(v, i); })),
+        source$.pipe(operators_1.filter(predicate)),
+        source$.pipe(operators_1.filter(function (v, i) { return !predicate(v, i); })),
     ];
 }
 exports.partition = partition;
@@ -58,7 +58,7 @@ function createFromService(notification, serviceConfig, store) {
                     error: serviceConfig.errorSelector ? serviceConfig.errorSelector(error) : error
                 });
             }));
-        var _d = partition(response$, (function (_a) {
+        var _d = partition(response$.pipe(operators_1.shareReplay(1)), (function (_a) {
             var success = _a.success;
             return success;
         })), success$ = _d[0], error$ = _d[1];
