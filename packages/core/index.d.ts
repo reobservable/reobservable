@@ -1,5 +1,5 @@
 import { Middleware, Reducer, Store } from 'redux'
-import Model, { Selectors } from './src/types/model'
+import Model, { Selectors } from './src/types/Model'
 import { Notification } from './src/types/Notification'
 import { init, getSelectors, getService, NOTIFICATION_LEVEL, notificate } from './src'
 import * as Symbols from './src/constants/symbols'
