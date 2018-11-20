@@ -10,4 +10,4 @@ export var NotificationLevel;
     NotificationLevel[NotificationLevel["erorr"] = LEVEL.error] = "erorr";
     NotificationLevel[NotificationLevel["all"] = LEVEL.all] = "all";
 })(NotificationLevel || (NotificationLevel = {}));
-//# sourceMappingURL=notification.js.map
+//# sourceMappingURL=Notification.js.map

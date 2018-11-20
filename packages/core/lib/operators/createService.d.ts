@@ -5,7 +5,7 @@
  */
 import { Observable } from 'rxjs';
 import { Store } from 'redux';
-import { Notification, NotificationLevel } from '../types/notification';
+import { Notification, NotificationLevel } from '../types/Notification';
 interface ServiceTemplates<T, E> {
     success: (resp: T) => string;
     error: (error: E) => string;

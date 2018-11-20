@@ -1,7 +1,7 @@
 import { Store, Middleware, Reducer } from 'redux';
-import Model, { Selectors } from './types/model';
+import Model, { Selectors } from './types/Model';
 import { ServiceConfig, ServiceFunc } from './operators/createService';
-import { Notification } from './types/notification';
+import { Notification } from './types/Notification';
 import { LEVEL as NOTIFICATION_LEVEL } from './constants/notification';
 import * as Symbols from './constants/symbols';
 interface Models {

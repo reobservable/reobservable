@@ -6,7 +6,7 @@
 import { from, of, Observable } from 'rxjs'
 import { catchError, map, filter, tap, shareReplay } from 'rxjs/operators'
 import { Store } from 'redux'
-import { Notification, NotificationLevel } from '../types/notification'
+import { Notification, NotificationLevel } from '../types/Notification'
 import { LEVEL } from '../constants/notification'
 import { SERVICE_ERROR_SET_ACTION, SERVICE_LOADING_END_ACTION, SERVICE_LOADING_START_ACTION } from '../constants/actionTypes'
 import { noop } from '../utils/function'

@@ -3,7 +3,6 @@
  * @author yoyoyohamapi
  * @ignore created 2018-08-03 12:47:25
  */
-import { Reducer } from 'redux'
 import { ActionsObservable, StateObservable } from 'redux-observable'
 import { Action } from './Action'
 import endTo from '../operators/endTo'

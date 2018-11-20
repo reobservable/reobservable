@@ -3,7 +3,6 @@
  * @author yoyoyohamapi
  * @ignore created 2018-08-03 12:47:25
  */
-import { Reducer } from 'redux';
 import { ActionsObservable, StateObservable } from 'redux-observable';
 import { Action } from './Action';
 import endTo from '../operators/endTo';
@@ -11,7 +10,7 @@ import end from '../operators/end';
 import { Observable } from 'rxjs';
 import { ServiceFunc } from '../operators/createService';
 export interface Reducers<S> {
-    readonly [reducerName: string]: Reducer<S>;
+    readonly [reducerName: string]: (state: S, payload: any) => S;
 }
 export interface Dependencies<T = any, E = any> {
     end: typeof end;
