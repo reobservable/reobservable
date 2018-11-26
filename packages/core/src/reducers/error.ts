@@ -24,7 +24,7 @@ export default function error(state = {flows: {}, services: {}}, action: Action)
       return {
         ...state,
         services: {
-          ...state.flows,
+          ...state.services,
           [payload.service]: null
         }
       }
