@@ -15,7 +15,7 @@ var __assign = (this && this.__assign) || function () {
  * @ignore created 2018-08-03 10:24:23
  */
 import { merge, of, throwError } from 'rxjs';
-import { mergeMap, mapTo, catchError } from 'rxjs/operators';
+import { mergeMap, mapTo, catchError, map } from 'rxjs/operators';
 import { createEpicMiddleware, ofType, combineEpics } from 'redux-observable';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { combineReducers, applyMiddleware, createStore } from 'redux';
@@ -111,7 +111,7 @@ export var init = function (config) {
      */
     var createEpic = function (actionType, flow) {
         return function epic(action$, state$, dependencies) {
-            var flow$ = flow(action$.ofType(actionType), action$, state$, dependencies);
+            var flow$ = flow(action$.pipe(ofType(actionType), map(function (action) { return (__assign({}, action, { payload: getPayload(action) })); })), action$, state$, dependencies);
             var loadingStart$ = action$.pipe(ofType(actionType), mapTo({
                 type: LOADING_START_ACTION,
                 payload: { flow: actionType }

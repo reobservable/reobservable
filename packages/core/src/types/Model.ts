@@ -23,7 +23,7 @@ export interface Dependencies<T = any, E = any> {
 }
 
 export type Flow<S = any> = (
-  flow$: ActionsObservable<Action>,
+  flow$: Observable<Action>,
   action$: ActionsObservable<Action>,
   state$: StateObservable<S>,
   dependencies: Dependencies

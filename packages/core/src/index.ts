@@ -5,7 +5,7 @@
  * @ignore created 2018-08-03 10:24:23
  */
 import { merge, of, throwError } from 'rxjs'
-import { mergeMap, mapTo, catchError } from 'rxjs/operators'
+import { mergeMap, mapTo, catchError, map } from 'rxjs/operators'
 import { createEpicMiddleware, ofType, combineEpics, ActionsObservable, StateObservable } from 'redux-observable'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import { combineReducers, applyMiddleware, createStore, Store, Middleware, Reducer } from 'redux'
@@ -142,7 +142,10 @@ export const init: InitFunc = (config) => {
   const createEpic = (actionType: string, flow: Flow) => {
     return function epic<S>(action$: ActionsObservable<Action>, state$: StateObservable<S>, dependencies: Dependencies) {
       const flow$ = flow(
-        action$.ofType(actionType),
+        action$.pipe(
+          ofType<Action, Action>(actionType),
+          map(action => ({...action, payload: getPayload(action)}))
+        ),
         action$,
         state$,
         dependencies

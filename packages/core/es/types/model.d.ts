@@ -19,7 +19,7 @@ export interface Dependencies<T = any, E = any> {
         [serviceName: string]: ServiceFunc<T, E>;
     };
 }
-export declare type Flow<S = any> = (flow$: ActionsObservable<Action>, action$: ActionsObservable<Action>, state$: StateObservable<S>, dependencies: Dependencies) => Observable<any>;
+export declare type Flow<S = any> = (flow$: Observable<Action>, action$: ActionsObservable<Action>, state$: StateObservable<S>, dependencies: Dependencies) => Observable<any>;
 export interface Flows<R> {
     readonly [flowName: string]: Flow<R>;
 }

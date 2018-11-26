@@ -115,7 +115,7 @@ exports.init = function (config) {
      */
     var createEpic = function (actionType, flow) {
         return function epic(action$, state$, dependencies) {
-            var flow$ = flow(action$.ofType(actionType), action$, state$, dependencies);
+            var flow$ = flow(action$.pipe(redux_observable_1.ofType(actionType), operators_1.map(function (action) { return (__assign({}, action, { payload: action_1.getPayload(action) })); })), action$, state$, dependencies);
             var loadingStart$ = action$.pipe(redux_observable_1.ofType(actionType), operators_1.mapTo({
                 type: actionTypes_1.LOADING_START_ACTION,
                 payload: { flow: actionType }
