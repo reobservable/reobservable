@@ -98,10 +98,24 @@ export const init: InitFunc = (config) => {
       const payload = getPayload(action)
       switch (type) {
         case `${model.name}/change`: {
-          return {...state, ...payload}
+          return { ...state, ...payload }
         }
         case `${model.name}/patch`: {
           return mergeWith(cloneDeep(state), payload, patchWith)
+        }
+        case `${model.name}/reset`: {
+          if (Array.isArray(payload.states) && payload.states.length) {
+            return Object.keys(state).reduce((newState, key) => {
+              if (payload.states.indexOf(key) > -1) {
+                newState[key] = cloneDeep(model.state[key])
+              } else {
+                newState[key] = state[key]
+              }
+              return newState
+            }, {})
+          } else {
+            return { ...model.state }
+          }
         }
         default: {
           const [modelName, reducerName] = type.split('/')

@@ -41,18 +41,20 @@ interface PostState {
   current: string
 }
 
+const userInitialState = {
+  list: [],
+  pagination: {
+    page: 1,
+    pageSize: 10,
+    total: 0
+  },
+  current: null,
+  editingPost: null
+}
+
 const user: Model<UserState, {user: UserState}> = {
   name: 'user',
-  state: {
-    list: [],
-    pagination: {
-      page: 1,
-      pageSize: 10,
-      total: 0
-    },
-    current: null,
-    editingPost: null
-  },
+  state: userInitialState,
   reducers: {
     fetchSuccess(state, payload) {
       const { list, total } = payload
@@ -189,7 +191,7 @@ describe('model', () => {
       expect(spyPostInit.notCalled).to.be.true
     })
 
-    it('should support declare reducers of others', () => {
+    it('should support reactive the reducer of others', () => {
       store.dispatch({
         type: 'post/create',
         payload: {
@@ -229,6 +231,51 @@ describe('model', () => {
           pageSize: 10,
           total: 10
         }
+      })
+    })
+
+    it('should have reset reducer', () => {
+      store.dispatch({
+        type: 'user/patch',
+        payload: {
+          pagination: { page: 2 },
+          current: 4
+        }
+      })
+
+      store.dispatch({
+        type: 'user/reset'
+      })
+
+      const { user } = store.getState()
+      expect(user).not.to.equal(userInitialState)
+      expect(user).to.deep.equal(userInitialState)
+    })
+
+    it('should support reset partial state', () => {
+      store.dispatch({
+        type: 'user/patch',
+        payload: {
+          current: 4,
+          pagination: { page: 2 },
+          editingPost: 4
+        }
+      })
+
+      store.dispatch({
+        type: 'user/reset',
+        payload: {
+          states: ['pagination', 'current']
+        }
+      })
+
+      const { user } = store.getState()
+      expect(user).not.to.equal(userInitialState)
+      expect(user).to.deep.equal({
+        list: [],
+        current: null,
+        pagination: userInitialState.pagination,
+        editingPost: 4
       })
     })
   })

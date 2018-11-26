@@ -21,7 +21,7 @@ export default function error(state, action) {
             return __assign({}, state, { flows: __assign({}, state.flows, (_a = {}, _a[payload.flow] = null, _a)) });
         }
         case SERVICE_LOADING_START_ACTION: {
-            return __assign({}, state, { services: __assign({}, state.flows, (_b = {}, _b[payload.service] = null, _b)) });
+            return __assign({}, state, { services: __assign({}, state.services, (_b = {}, _b[payload.service] = null, _b)) });
         }
         case ERROR_SET_ACTION: {
             return __assign({}, state, { flows: __assign({}, state.flows, (_c = {}, _c[payload.flow] = payload.error, _c)) });

@@ -79,6 +79,22 @@ exports.init = function (config) {
                 case model.name + "/patch": {
                     return mergeWith(cloneDeep(state), payload, patchWith);
                 }
+                case model.name + "/reset": {
+                    if (Array.isArray(payload.states) && payload.states.length) {
+                        return Object.keys(state).reduce(function (newState, key) {
+                            if (payload.states.indexOf(key) > -1) {
+                                newState[key] = cloneDeep(model.state[key]);
+                            }
+                            else {
+                                newState[key] = state[key];
+                            }
+                            return newState;
+                        }, {});
+                    }
+                    else {
+                        return __assign({}, model.state);
+                    }
+                }
                 default: {
                     var _a = type.split('/'), modelName = _a[0], reducerName = _a[1];
                     if (modelName === model.name && typeof model.reducers[reducerName] === 'function') {
