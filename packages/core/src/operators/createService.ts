@@ -4,7 +4,7 @@
  * @ignore created 2018-08-13 14:26:55
  */
 import { from, of, Observable } from 'rxjs'
-import { catchError, map, filter, tap, shareReplay } from 'rxjs/operators'
+import { catchError, map, filter, tap, shareReplay, retryWhen, scan, delay } from 'rxjs/operators'
 import { Store } from 'redux'
 import { Notification, NotificationLevel } from '../types/Notification'
 import { LEVEL } from '../constants/notification'
@@ -39,7 +39,7 @@ interface Result<T, E> {
   success?: boolean | undefined
 }
 
-export type ServiceFunc<T, E> = (serviceName: string, service: Promise<T>, options?: ServiceOptions<T, E>) =>
+export type ServiceFunc<T, E> = (serviceName: string, service: Promise<T> | Observable<T>, options?: ServiceOptions<T, E>) =>
   [Observable<Result<T, E>>, Observable<Result<T, E>>]
 
 export function partition<T>(source$: Observable<T>, predicate: (value: T, index: number) => boolean) {
@@ -59,7 +59,15 @@ export default function createFromService<T, E>(notification: Notification, serv
    * @param service
    * @param options
    */
-  return function service(serviceName, service, options = { level: LEVEL.silent }) {
+  return function service(
+    serviceName,
+    service,
+    options = {
+      level: LEVEL.silent,
+      retry: 2,
+      retryDelay: 50
+    }
+   ) {
     store.dispatch({
       type: SERVICE_LOADING_START_ACTION,
       payload: {
@@ -67,14 +75,28 @@ export default function createFromService<T, E>(notification: Notification, serv
       }
     })
     const { success = noop, error = noop } = options.templates || serviceConfig.templates || {}
-    const { level } = options
+    const { level, retry = 0, retryDelay = 0 } = options
     const successNotificate = (resp: T) => level >= LEVEL.all &&
       notification.success(success(resp))
     const errorNotificate = (err: E) => level >= LEVEL.error &&
       notification.error(error(err))
 
+    const service$ = (service instanceof Observable)
+      ? service.pipe(
+          retryWhen(error$ => error$.pipe(
+            scan((count, err) => {
+              if (count >= retry) {
+                throw err
+              } else {
+                return count + 1
+              }
+            }, 0),
+            delay(retryDelay)
+          ))
+      )
+      : from(service)
     const response$ = (typeof serviceConfig.isSuccess) === 'function'
-    ? from(service).pipe(
+    ? service$.pipe(
         map(resp => {
           if (serviceConfig.isSuccess(resp)) {
             return {  resp, success: true }
@@ -84,7 +106,7 @@ export default function createFromService<T, E>(notification: Notification, serv
           }
         })
       )
-    : from(service).pipe(
+    : service$.pipe(
         map(resp => {
           return {  resp, success: true }
         }),

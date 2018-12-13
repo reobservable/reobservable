@@ -4,7 +4,7 @@
  * @ignore created 2018-08-14 19:04:55
  */
 import { Store } from 'redux'
-import { merge } from 'rxjs'
+import { merge, Observable } from 'rxjs'
 import { mapTo, switchMap, map } from 'rxjs/operators'
 import { expect } from 'chai'
 import axios, { AxiosResponse, AxiosError } from 'axios'
@@ -124,7 +124,7 @@ const user: Model<UserState, {user: UserState}> = {
         })
       )
     },
-    unfollowWithRetryDeley(flow$, action$, state$, {services: { api }}) {
+    unfollowWithRetryDelay(flow$, action$, state$, {services: { api }}) {
       return flow$.pipe(
         switchMap(({payload}) => {
           const [success$, error$] = api(
@@ -194,8 +194,14 @@ function followUser(params) {
   return request.post('/users/follow', {params})
 }
 
+const createUnfollowUserSubscriber = sinon.spy((observer, params) => {
+  request.post('/users/unfollow', {params})
+    .then(result => observer.next(result))
+    .catch(error => observer.error(error))
+})
+
 function unfollowUser(params) {
-  return request.post('/users/unfollow', {params})
+  return Observable.create(observer => createUnfollowUserSubscriber(observer, params))
 }
 
 describe('service', () => {
@@ -469,6 +475,7 @@ describe('service', () => {
           'user/fetch': null
         }
       })
+      sinon.restore()
       done()
     }, 10)
   })
@@ -523,30 +530,26 @@ describe('service', () => {
   })
 
   it('should support retry', (done) => {
-    const fake = sinon.spy(unfollowUser)
     store = init({
       models: { user },
       services: {
         api: apiService
       }
     })
-    nock(/api\.com/).post(/users\/unfollow/).replyWithError({
-      code: -1,
-      message: 'unknown error'
-    })
+    nock(/api\.com/).post(/users\/unfollow/).replyWithError('error')
     store.dispatch({
       type: 'user/unfollow'
     })
     setTimeout(() => {
-      expect(fake.callCount).to.equal(3)
+      expect(createUnfollowUserSubscriber.callCount).to.equal(3)
       const error = store.getState().error
       expect(error.services['user/unfollow']).not.empty
+      createUnfollowUserSubscriber.resetHistory()
       done()
     }, 1000)
-  })
+  }).timeout(2000)
 
   it('should support retryDelay', (done) => {
-    const fake = sinon.spy(unfollowUser)
     store = init({
       models: { user },
       services: {
@@ -561,16 +564,17 @@ describe('service', () => {
       type: 'user/unfollowWithRetryDelay'
     })
     setTimeout(() => {
-      expect(fake.callCount).to.equal(1)
+      expect(createUnfollowUserSubscriber.callCount).to.equal(1)
     }, 500)
     setTimeout(() => {
-      expect(fake.callCount).to.equal(2)
+      expect(createUnfollowUserSubscriber.callCount).to.equal(2)
     }, 1500)
     setTimeout(() => {
-      expect(fake.callCount).to.equal(3)
+      expect(createUnfollowUserSubscriber.callCount).to.equal(3)
       const error = store.getState().error
       expect(error.services['user/unfollow']).not.empty
+      createUnfollowUserSubscriber.resetHistory()
       done()
     }, 3000)
-  })
+  }).timeout(5000)
 })
