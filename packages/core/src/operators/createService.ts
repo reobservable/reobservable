@@ -26,7 +26,11 @@ interface ServiceOptions<T, E> {
   /** 等级 */
   level: NotificationLevel,
   /** 消息模板 */
-  templates?: ServiceTemplates<T, E>
+  templates?: ServiceTemplates<T, E>,
+  /** 重试次数 */
+  retry?: number,
+  /** 重试延迟 */
+  retryDelay?: number
 }
 
 interface Result<T, E> {

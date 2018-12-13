@@ -107,6 +107,41 @@ const user: Model<UserState, {user: UserState}> = {
         })
       )
     },
+    unfollow(flow$, action$, state$, {services: { api }}) {
+      return flow$.pipe(
+        switchMap(({payload}) => {
+          const [success$, error$] = api(
+            'user/unfollow',
+            unfollowUser({name: payload.name}),
+            {
+              level: NOTIFICATION_LEVEL.all,
+              retry: 2
+            }
+          )
+          return merge(success$, error$).pipe(
+            mapTo(null)
+          )
+        })
+      )
+    },
+    unfollowWithRetryDeley(flow$, action$, state$, {services: { api }}) {
+      return flow$.pipe(
+        switchMap(({payload}) => {
+          const [success$, error$] = api(
+            'user/unfollow',
+            unfollowUser({name: payload.name}),
+            {
+              level: NOTIFICATION_LEVEL.all,
+              retry: 2,
+              retryDelay: 1000
+            }
+          )
+          return merge(success$, error$).pipe(
+            mapTo(null)
+          )
+        })
+      )
+    },
     fetch(flow$) {
       const api: ApiServiceFunc = getService('api')
       return flow$.pipe(
@@ -157,6 +192,10 @@ function renameUser(params) {
 
 function followUser(params) {
   return request.post('/users/follow', {params})
+}
+
+function unfollowUser(params) {
+  return request.post('/users/unfollow', {params})
 }
 
 describe('service', () => {
@@ -481,5 +520,57 @@ describe('service', () => {
       expect(error.services['user/follow']).not.empty
       done()
     }, 10)
+  })
+
+  it('should support retry', (done) => {
+    const fake = sinon.spy(unfollowUser)
+    store = init({
+      models: { user },
+      services: {
+        api: apiService
+      }
+    })
+    nock(/api\.com/).post(/users\/unfollow/).replyWithError({
+      code: -1,
+      message: 'unknown error'
+    })
+    store.dispatch({
+      type: 'user/unfollow'
+    })
+    setTimeout(() => {
+      expect(fake.callCount).to.equal(3)
+      const error = store.getState().error
+      expect(error.services['user/unfollow']).not.empty
+      done()
+    }, 1000)
+  })
+
+  it('should support retryDelay', (done) => {
+    const fake = sinon.spy(unfollowUser)
+    store = init({
+      models: { user },
+      services: {
+        api: apiService
+      }
+    })
+    nock(/api\.com/).post(/users\/unfollow/).replyWithError({
+      code: -1,
+      message: 'unknown error'
+    })
+    store.dispatch({
+      type: 'user/unfollowWithRetryDelay'
+    })
+    setTimeout(() => {
+      expect(fake.callCount).to.equal(1)
+    }, 500)
+    setTimeout(() => {
+      expect(fake.callCount).to.equal(2)
+    }, 1500)
+    setTimeout(() => {
+      expect(fake.callCount).to.equal(3)
+      const error = store.getState().error
+      expect(error.services['user/unfollow']).not.empty
+      done()
+    }, 3000)
   })
 })
