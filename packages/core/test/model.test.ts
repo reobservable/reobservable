@@ -220,6 +220,7 @@ describe('model', () => {
           pagination: {
             total: 10
           },
+          current: 4,
           list: [{id: 1, name: 'Messi', age: 31}]
         }
       })
@@ -230,7 +231,8 @@ describe('model', () => {
           page: 1,
           pageSize: 10,
           total: 10
-        }
+        },
+        current: 4
       })
     })
 
