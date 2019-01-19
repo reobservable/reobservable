@@ -11,6 +11,10 @@
 - [x] support custom redux config
 - [x] support action type alias
 - [ ] support global `state$` observing
+- [ ] support `model.change()` ...
+- [ ] `@reobservable/test`
+- [ ] `@reobservable/hooks`
+
 
 ## ecosystem
 
