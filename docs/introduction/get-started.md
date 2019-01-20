@@ -6,29 +6,40 @@
 npm install @reobservable/core
 ```
 
-## Define Model
+Suppose we want to build a user management app which should display a user list in the web page, the following steps should be followed:
 
-**models/user.ts**:
+## Define Service
+
+At first, you should declare the service that in charge of the communication of the frontend and backend. In this example, suppose you prefre [axios](https://github.com/axios/axios) for api request:
+
+```ts
+import { AxiosResponse, AxiosError } from 'axios'
+import { ServiceConfig, ServiceFunc } from '@reobservable/core'
+
+interface ApiService extends ServiceConfig<AxiosResponse<{data: any}>, AxiosError> {}
+
+const api: ApiService = {
+  templates: {
+    success: (resp) => 'ok!',
+    error: (error) => 'error!'
+  }
+}
+
+export default api
+```
+
+## Define Models
+
+In this scenario, we should define a **user** model to aggregate state, actions, async actions & reducers.
 
 ```ts
 import { Model } from '@reobservable/core'
 import { merge } from 'rxjs'
 import { switchMap, withLatestFrom, map, mapTo } from 'rxjs/operators'
+import { IUserState, IState } from './types'
+import { fetchUsers } from './service'
 
-import { fetchUsers } from './apis'
-
-interface IUser {
-  name: string,
-  avatar: string,
-  age: number
-}
-
-interface IUserState = {
-  list: IUser[],
-  total: number
-}
-
-const user: Model<IUserState> = {
+const user: Model<IUserState, IState> = {
   name: 'user',
   state: {
     list: [],
@@ -55,9 +66,10 @@ const user: Model<IUserState> = {
       const { api } = dependencies.services
       return flow$.pipe(
         withLatestFrom(state$, (action, state) => {
-          return {
-            // params
+          const params = {
+            // construct params from state or action payload
           }
+          return params
         }),
         switchMap(params => {
           const [success$, error$] = api(
@@ -86,28 +98,9 @@ const user: Model<IUserState> = {
 }
 ```
 
-## Define Service
+## Create Redux Store
 
-> In this example, suppose you use axios for api request:
-
-**services/api.ts**:
-
-```ts
-import { AxiosResponse, AxiosError } from 'axios'
-import { ServiceConfig, ServiceFunc } from '@reobservable/core'
-
-interface ApiService extends ServiceConfig<AxiosResponse<{data: any}>, AxiosError> {}
-
-export default {
-  templates: {
-    success: (resp) => 'success',
-    error: (error) => `error`
-  }
-} as ApiService
-```
-
-
-## Create Store
+Finnaly, we could call `init(options)` to create redux store:
 
 ```tsx
 import * as React from 'react'

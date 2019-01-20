@@ -9,7 +9,7 @@ module.exports = {
         nav: [
           { text: 'Introduction', link: '/introduction/' },
           { text: 'Basics', link: '/basics/'},
-          { text: 'Recipes', link: '/recipes/' },
+          { test: 'Advanced', link: '/advanced/'},
           { text: 'API Reference', link: '/api/'}
         ],
         sidebar: {
@@ -18,18 +18,23 @@ module.exports = {
             collapsable: false,
             children: [
               '',
+              'concepts',
               'get-started',
-              'architecture'
             ]
           }],
           '/basics/': [{
             title: 'Basics',
             collapsable: false,
             children: [
-              '',
-              'service',
-              'error',
-              'loading'
+              'change-and-patch',
+              'loading-state',
+              'error-state'
+            ]
+          }],
+          '/advanced/': [{
+            title: 'Advanced',
+            collapsable: false,
+            children: [
             ]
           }]
         }
