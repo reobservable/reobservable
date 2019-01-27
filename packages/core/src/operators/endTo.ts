@@ -5,7 +5,7 @@
  */
 import { pipe, UnaryFunction, Observable } from 'rxjs'
 import { mapTo } from 'rxjs/operators'
-import { Action, EndAction } from '../types/Action'
+import { Action, EndAction } from '../types/action'
 import { FLOW_END_INDICATOR } from '../constants/meta'
 
 /**

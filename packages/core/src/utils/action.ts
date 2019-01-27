@@ -3,7 +3,7 @@
  * @author yoyoyohamapi
  * @ignore created 2018-08-03 13:10:52
  */
-import { Action } from '../types/Action'
+import { Action } from '../types/action'
 import { isNil } from './logic'
 import { ALIAS } from '../constants/symbols'
 

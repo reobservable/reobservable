@@ -4,7 +4,7 @@
  * @ignore created 2018-08-03 12:36:49
  */
 
-import { Action } from '../types/Action'
+import { Action } from '../types/action'
 import {
   LOADING_START_ACTION,
   LOADING_END_ACTION,
