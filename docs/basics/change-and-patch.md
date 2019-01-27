@@ -109,7 +109,7 @@ Patch means **patch update** the state, in this example, **patch** reducer will 
 
 ## Alias
 
-The abuse of change and patch action may cause your redux dev-tools looks like:
+The abuse of change and patch action may cause your redux dev-tools looks unreadable:
 
 ```
 user/change
