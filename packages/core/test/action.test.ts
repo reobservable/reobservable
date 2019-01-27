@@ -6,7 +6,7 @@
 import { expect } from 'chai'
 import { Symbols } from '../src'
 import { actionSanitizer, getPayload } from '../src/utils/action'
-import { Action } from '../src/types/Action'
+import { Action } from '../src/types/action'
 
 describe('action', () => {
   it('should payload be {} when payload is nil', () => {
