@@ -13,7 +13,7 @@
   "scripts": {
     "lint": "lerna run lint",
     "bootstrap": "lerna bootstrap --hoist",
-    "publish": "lerna publish",
+    "publish": "npm run test & lerna publish",
     "test": "nyc mocha --opts mocha.opts",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "docs:dev": "vuepress dev docs",

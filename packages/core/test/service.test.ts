@@ -207,6 +207,11 @@ function unfollowUser(params) {
 describe('service', () => {
   let store: Store
 
+  before(() => {
+    // tslint:disable-next-line:no-empty
+    console.error = function() {}
+  })
+
   beforeEach(() => {
     store = init({
       models: { user },
@@ -576,5 +581,5 @@ describe('service', () => {
       createUnfollowUserSubscriber.resetHistory()
       done()
     }, 3000)
-  }).timeout(5000)
+  }).timeout(8000)
 })

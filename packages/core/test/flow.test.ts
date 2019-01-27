@@ -98,6 +98,11 @@ describe('flow', () => {
     })
   }
 
+  before(() => {
+    // tslint:disable-next-line:no-empty
+    console.error = function() {}
+  })
+
   beforeEach(initStore)
 
   it('should set loading true when flow start', () => {
