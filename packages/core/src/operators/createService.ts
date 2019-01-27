@@ -64,8 +64,8 @@ export default function createFromService<T, E>(notification: Notification, serv
     service,
     options = {
       level: LEVEL.silent,
-      retry: 2,
-      retryDelay: 50
+      retry: 0,
+      retryDelay: 0
     }
    ) {
     store.dispatch({
