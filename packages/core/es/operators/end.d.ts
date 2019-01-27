@@ -4,7 +4,7 @@
  * @ignore created 2018-08-03 10:31:20
  */
 import { UnaryFunction, Observable } from 'rxjs';
-import { Action, EndAction } from '../types/Action';
+import { Action, EndAction } from '../types/action';
 /**
  * end operator
  * @param {function(value: Action): EndAction} project

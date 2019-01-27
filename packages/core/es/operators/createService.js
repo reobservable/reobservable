@@ -27,8 +27,8 @@ export default function createFromService(notification, serviceConfig, store) {
     return function service(serviceName, service, options) {
         if (options === void 0) { options = {
             level: LEVEL.silent,
-            retry: 2,
-            retryDelay: 50
+            retry: 0,
+            retryDelay: 0
         }; }
         store.dispatch({
             type: SERVICE_LOADING_START_ACTION,
