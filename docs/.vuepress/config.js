@@ -27,6 +27,7 @@ module.exports = {
             collapsable: false,
             children: [
               'change-and-patch',
+              'custom-service',
               'loading-state',
               'error-state'
             ]
