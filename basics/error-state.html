@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>ErrorState State</title>
+    <meta name="description" content="">
+    
+    
+    <link rel="preload" href="/assets/css/styles.ad1fd5f3.css" as="style"><link rel="preload" href="/assets/js/app.ad1fd5f3.js" as="script"><link rel="preload" href="/assets/js/7.4d7fee27.js" as="script"><link rel="prefetch" href="/assets/css/2.styles.99096804.css"><link rel="prefetch" href="/assets/css/1.styles.1dbe54a1.css"><link rel="prefetch" href="/assets/js/1.1dbe54a1.js"><link rel="prefetch" href="/assets/js/2.99096804.js"><link rel="prefetch" href="/assets/js/3.650ecc99.js"><link rel="prefetch" href="/assets/js/4.4b5babf4.js"><link rel="prefetch" href="/assets/js/5.636f93c8.js"><link rel="prefetch" href="/assets/js/6.b5a926fa.js"><link rel="prefetch" href="/assets/js/8.824c0b73.js"><link rel="prefetch" href="/assets/js/9.fd089d3a.js"><link rel="prefetch" href="/assets/js/10.3884a1a5.js"><link rel="prefetch" href="/assets/js/11.69c604c7.js">
+    <link rel="stylesheet" href="/assets/css/2.styles.99096804.css"><link rel="stylesheet" href="/assets/css/styles.ad1fd5f3.css"><link rel="stylesheet" href="/assets/css/1.styles.1dbe54a1.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container no-sidebar"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"></a> <div class="links" style="max-width:nullpx;"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <!----></div></header> <div class="sidebar-mask"></div> <div class="sidebar"><!---->  <!----> </div> <div class="page"> <div class="content"><h1 id="errorstate-state"><a href="#errorstate-state" aria-hidden="true" class="header-anchor">#</a> ErrorState State</h1> <p>Sometimes, you may want know if a service or flow failed. If so, you may display a error message on your web page:</p> <p><img src="/assets/img/error.6611f047.png" alt></p> <p>In reobservable, there is a built-in sub-state called <code>error</code> in the root state:</p> <div class="language-ts extra-class"><pre class="language-ts"><code><span class="token punctuation">{</span>
+  error<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    services<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+      fetchUser<span class="token punctuation">:</span> <span class="token string">'bad request'</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    flows<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+      <span class="token string">'user/fetch'</span><span class="token punctuation">:</span> <span class="token string">'cannot read id of undefined'</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>As you can see, there are two type of error state in reobservable.</p> <h2 id="service-error"><a href="#service-error" aria-hidden="true" class="header-anchor">#</a> Service Error</h2> <p>Service error indicates if a service is failed. You call a service inside a flow like:</p> <div class="language-ts extra-class"><pre class="language-ts"><code><span class="token keyword">const</span> model <span class="token operator">=</span> <span class="token punctuation">{</span>
+  name<span class="token punctuation">:</span> <span class="token string">'user'</span><span class="token punctuation">,</span>
+  <span class="token comment">// ....</span>
+  flows<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    <span class="token function">fetch</span><span class="token punctuation">(</span>flow$<span class="token punctuation">,</span> action$<span class="token punctuation">,</span> payload$<span class="token punctuation">,</span> dependencies<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">const</span> <span class="token punctuation">{</span> api <span class="token punctuation">}</span> <span class="token operator">=</span> dependencies<span class="token punctuation">.</span>services
+      
+      <span class="token keyword">return</span> flow$<span class="token punctuation">.</span><span class="token function">pipe</span><span class="token punctuation">(</span>
+        <span class="token function">switchMap</span><span class="token punctuation">(</span>action <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+          <span class="token keyword">const</span> <span class="token punctuation">[</span>success$<span class="token punctuation">,</span> error$<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">api</span><span class="token punctuation">(</span>
+            <span class="token comment">// service name</span>
+            <span class="token string">'fetchUser'</span><span class="token punctuation">,</span>
+            service<span class="token punctuation">.</span><span class="token function">fetchUser</span><span class="token punctuation">(</span>params<span class="token punctuation">)</span>
+          <span class="token punctuation">)</span>
+          <span class="token comment">// ...</span>
+        <span class="token punctuation">}</span><span class="token punctuation">)</span>
+      <span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>Because we named the service <code>fetchUser</code>, then we can inspect service error by:</p> <div class="language-ts extra-class"><pre class="language-ts"><code><span class="token keyword">const</span> <span class="token function-variable function">mapStateToProps</span> <span class="token operator">=</span> <span class="token punctuation">(</span>state<span class="token punctuation">:</span> IState<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> userFetchError <span class="token operator">=</span> state<span class="token punctuation">.</span>error<span class="token punctuation">.</span>services<span class="token punctuation">[</span><span class="token string">'fetchUser'</span><span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h2 id="flow-error"><a href="#flow-error" aria-hidden="true" class="header-anchor">#</a> Flow Error</h2> <p>Flow error indicates if a flow is failed. Like service error, you can access flow error by:</p> <div class="language-ts extra-class"><pre class="language-ts"><code><span class="token keyword">const</span> <span class="token function-variable function">mapStateToProps</span> <span class="token operator">=</span> <span class="token punctuation">(</span>state<span class="token punctuation">:</span> IState<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> nameChangingError <span class="token operator">=</span> state<span class="token punctuation">.</span>loading<span class="token punctuation">.</span>flows<span class="token punctuation">[</span><span class="token string">'user/changeName'</span><span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+</code></pre></div></div> <div class="page-edit"><!----> <!----></div> <!----> </div> <!----></div></div>
+    <script src="/assets/js/7.4d7fee27.js" defer></script><script src="/assets/js/app.ad1fd5f3.js" defer></script>
+  </body>
+</html>

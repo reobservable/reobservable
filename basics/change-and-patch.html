@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Change and Patch Action</title>
+    <meta name="description" content="">
+    
+    
+    <link rel="preload" href="/assets/css/styles.ad1fd5f3.css" as="style"><link rel="preload" href="/assets/js/app.ad1fd5f3.js" as="script"><link rel="preload" href="/assets/js/5.636f93c8.js" as="script"><link rel="prefetch" href="/assets/css/2.styles.99096804.css"><link rel="prefetch" href="/assets/css/1.styles.1dbe54a1.css"><link rel="prefetch" href="/assets/js/1.1dbe54a1.js"><link rel="prefetch" href="/assets/js/2.99096804.js"><link rel="prefetch" href="/assets/js/3.650ecc99.js"><link rel="prefetch" href="/assets/js/4.4b5babf4.js"><link rel="prefetch" href="/assets/js/6.b5a926fa.js"><link rel="prefetch" href="/assets/js/7.4d7fee27.js"><link rel="prefetch" href="/assets/js/8.824c0b73.js"><link rel="prefetch" href="/assets/js/9.fd089d3a.js"><link rel="prefetch" href="/assets/js/10.3884a1a5.js"><link rel="prefetch" href="/assets/js/11.69c604c7.js">
+    <link rel="stylesheet" href="/assets/css/2.styles.99096804.css"><link rel="stylesheet" href="/assets/css/styles.ad1fd5f3.css"><link rel="stylesheet" href="/assets/css/1.styles.1dbe54a1.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container no-sidebar"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"></a> <div class="links" style="max-width:nullpx;"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <!----></div></header> <div class="sidebar-mask"></div> <div class="sidebar"><!---->  <!----> </div> <div class="page"> <div class="content"><h1 id="change-and-patch-action"><a href="#change-and-patch-action" aria-hidden="true" class="header-anchor">#</a> Change and Patch Action</h1> <h2 id="defination"><a href="#defination" aria-hidden="true" class="header-anchor">#</a> Defination</h2> <p>There are two built-in sync action in reobservable:</p> <ul><li><code>change</code> action: change the state declared in action payload</li> <li><code>patch</code> action: change the state <strong>partly</strong> declared in action payload.</li></ul> <p>Correspondingly, every model in reobservable has two default reducer:</p> <ul><li><code>change</code> reducer</li> <li><code>patch</code> reducer</li></ul> <p>Change and patch reducer helps you quickly change the model state <strong>without define any other reducers</strong>.</p> <h2 id="difference"><a href="#difference" aria-hidden="true" class="header-anchor">#</a> Difference</h2> <p>Suppose we defined an user model:</p> <div class="language-ts extra-class"><pre class="language-ts"><code><span class="token keyword">import</span> <span class="token punctuation">{</span> Model <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'@reobservable'</span>
+
+<span class="token keyword">const</span> model<span class="token punctuation">:</span> Model<span class="token operator">&lt;</span>State<span class="token punctuation">,</span> UserState<span class="token operator">&gt;</span> <span class="token operator">=</span> <span class="token punctuation">{</span>
+  name<span class="token punctuation">:</span> <span class="token string">'user'</span><span class="token punctuation">,</span>
+  state<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    list<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    pagination<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+      totolCount<span class="token punctuation">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+      page<span class="token punctuation">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+      pageSize<span class="token punctuation">:</span> <span class="token number">10</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  reducers<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    <span class="token comment">// ...</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  flows<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    <span class="token comment">// ...</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>Initially, the state of the model is:</p> <div class="language-ts extra-class"><pre class="language-ts"><code><span class="token punctuation">{</span>
+  list<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+  pagination<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    totolCount<span class="token punctuation">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+    page<span class="token punctuation">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+    pageSize<span class="token punctuation">:</span> <span class="token number">10</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>if we dispatched an change action:</p> <div class="language-ts extra-class"><pre class="language-ts"><code><span class="token punctuation">{</span>
+  <span class="token keyword">type</span><span class="token punctuation">:</span> <span class="token string">'user/change'</span><span class="token punctuation">,</span>
+  payload<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    pagination<span class="token punctuation">:</span> <span class="token punctuation">{</span> 
+      totalCount<span class="token punctuation">:</span> <span class="token number">1</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>then, new state will be:</p> <div class="language-ts extra-class"><pre class="language-ts"><code><span class="token punctuation">{</span>
+  list<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+  pagination<span class="token punctuation">:</span> <span class="token punctuation">{</span> 
+    totalCount<span class="token punctuation">:</span> <span class="token number">1</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>As you can see, <code>page</code>、 <code>pageSize</code> state disappeared since <strong>change</strong> reducer will be overrided the state declared in action payload directly. In this example, <strong>change</strong> reducer overrided the <code>pagination</code> state.</p> <p>Instead, we dispatched an change action:</p> <div class="language-ts extra-class"><pre class="language-ts"><code><span class="token punctuation">{</span>
+  <span class="token keyword">type</span><span class="token punctuation">:</span> <span class="token string">'user/patch'</span><span class="token punctuation">,</span>
+  payload<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    pagination<span class="token punctuation">:</span> <span class="token punctuation">{</span> 
+      totalCount<span class="token punctuation">:</span> <span class="token number">1</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>then, new state will be:</p> <div class="language-ts extra-class"><pre class="language-ts"><code><span class="token punctuation">{</span>
+  list<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+  pagination<span class="token punctuation">:</span> <span class="token punctuation">{</span> 
+    totalCount<span class="token punctuation">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+    page<span class="token punctuation">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+    pageSize<span class="token punctuation">:</span> <span class="token number">10</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>Patch means <strong>patch update</strong> the state, in this example, <strong>patch</strong> reducer will only update the <code>totalCount</code> inside the <code>pagination</code>.</p> <h2 id="alias"><a href="#alias" aria-hidden="true" class="header-anchor">#</a> Alias</h2> <p>The abuse of change and patch action may cause your redux dev-tools looks unreadable:</p> <div class="language- extra-class"><pre class="language-text"><code>user/change
+user/change
+post/change
+...
+</code></pre></div><p>To pursue a more clear action flow, we could provide a alias for change and patch action:</p> <div class="language-ts extra-class"><pre class="language-ts"><code><span class="token keyword">import</span> <span class="token punctuation">{</span> Symbols <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'@reobservable/core'</span>
+
+<span class="token function">disaptch</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  <span class="token keyword">type</span><span class="token punctuation">:</span> <span class="token string">'user/change'</span><span class="token punctuation">,</span>
+  <span class="token punctuation">[</span>Symbols<span class="token punctuation">.</span><span class="token constant">ALIAS</span><span class="token punctuation">]</span><span class="token punctuation">:</span> <span class="token string">'user/changePagination'</span><span class="token punctuation">,</span>
+  payload<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    pagination<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+      totalCount<span class="token punctuation">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+      page<span class="token punctuation">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+      pageSize<span class="token punctuation">:</span> <span class="token number">10</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+</code></pre></div></div> <div class="page-edit"><!----> <!----></div> <!----> </div> <!----></div></div>
+    <script src="/assets/js/5.636f93c8.js" defer></script><script src="/assets/js/app.ad1fd5f3.js" defer></script>
+  </body>
+</html>
