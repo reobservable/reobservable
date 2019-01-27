@@ -4,11 +4,11 @@
  * @author yoyoyohamapi
  * @ignore created 2018-08-03 11:19:14
  */
-import { Action as ReduxAction } from 'redux'
 import { FLOW_END_INDICATOR } from '../constants/meta'
 import { ALIAS } from '../constants/symbols'
 
-export interface Action extends ReduxAction {
+export interface Action {
+  type: string,
   payload?: any,
   [ALIAS]?: string
 }
