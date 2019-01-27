@@ -13,12 +13,6 @@ script:
   - npm run coverage
 
 deploy:
-  - provider: script
-    script: npx lerna publish -y from-git
-    skip-cleanup: true
-    on:
-      tags: true
-      branch: false
   - provider: pages
     skip-cleanup: true
     local-dir: docs/.vuepress/dist
