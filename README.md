@@ -5,6 +5,7 @@ Redux + rxjs + redux-obersvable best practice. Inspired by dva, rematch.
 ---------------
 
 [![Coverage Status](https://coveralls.io/repos/github/reobservable/reobservable/badge.svg?branch=master)](https://coveralls.io/github/reobservable/reobservable?branch=master)
+[![Build Status](https://travis-ci.com/reobservable/reobservable.svg?branch=master)](https://travis-ci.com/reobservable/reobservable)
 
 **Do not use it right now!!! I'm busy on documentation & tests.**
 
