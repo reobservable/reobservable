@@ -36,7 +36,7 @@ interface Models {
 
 interface ReduxConfig {
   middleware?: Middleware | [Middleware],
-  rootReducer?: (reducer: Reducer) => Reducer
+  rootReducer?: (reducer: Reducer, reducers: {[key: string]: Reducer}) => Reducer,
 }
 
 interface Config {
@@ -232,7 +232,7 @@ export const init: InitFunc = (config) => {
 
   let rootReducer = combineReducers(reducers)
   if (redux.rootReducer) {
-    rootReducer = redux.rootReducer(rootReducer)
+    rootReducer = redux.rootReducer(rootReducer, reducers)
   }
 
   const store = createStore(

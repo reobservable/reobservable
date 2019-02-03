@@ -8,10 +8,10 @@ import * as sinon from 'sinon'
 import { expect } from 'chai'
 import { init } from '../src'
 import Model from '../src/types/Model'
-import { Middleware } from 'redux'
+import { Middleware, combineReducers } from 'redux'
 
 describe('redux', () => {
-  it('should support root reducer wrapper', () => {
+  it('should support root reducer wrapper#1', () => {
     const model: Model<{name: string}> = {
       name: 'model',
       state: {
@@ -53,6 +53,54 @@ describe('redux', () => {
 
     const { name } = store.getState().model
     expect(name).to.equal('changed')
+  })
+
+  it('should support root reducer wrapper#2', () => {
+    const model: Model<{name: string}> = {
+      name: 'model',
+      state: {
+        name: 'model'
+      },
+      reducers: {
+        changeName(state, payload) {
+          return { ...state, name: payload.name }
+        },
+        dangerouslyChangeName(state, payload) {
+          return { ...state, name: payload.name }
+        }
+      }
+    }
+    const store = init({
+      redux: {
+        rootReducer(rootReducer, reducers) {
+          return combineReducers({
+            ...reducers,
+            count: (state = 0, action) => {
+              if (action.type === 'count/incr') {
+                return state + 1
+              } else {
+                return state
+              }
+            }
+          })
+        }
+      },
+      models: { model }
+    })
+
+    store.dispatch({
+      type: 'model/changeName',
+      payload: { name: 'changed' }
+    })
+
+    store.dispatch({
+      type: 'count/incr',
+    })
+
+    const { name } = store.getState().model
+    const count = store.getState().count
+    expect(name).to.equal('changed')
+    expect(count).to.equal(1)
   })
 
   it('should support single redux middleware', () => {
