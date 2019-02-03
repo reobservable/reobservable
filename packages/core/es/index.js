@@ -170,7 +170,7 @@ export var init = function (config) {
     var middleware = applyMiddleware.apply(void 0, [epicMiddleware].concat(extraMiddleware));
     var rootReducer = combineReducers(reducers);
     if (redux.rootReducer) {
-        rootReducer = redux.rootReducer(rootReducer);
+        rootReducer = redux.rootReducer(rootReducer, reducers);
     }
     var store = createStore(rootReducer, composeEnhancers(middleware));
     // 配置 services

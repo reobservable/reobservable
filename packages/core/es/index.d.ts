@@ -9,7 +9,9 @@ interface Models {
 }
 interface ReduxConfig {
     middleware?: Middleware | [Middleware];
-    rootReducer?: (reducer: Reducer) => Reducer;
+    rootReducer?: (reducer: Reducer, reducers: {
+        [key: string]: Reducer;
+    }) => Reducer;
 }
 interface Config {
     models?: Models;

@@ -174,7 +174,7 @@ exports.init = function (config) {
     var middleware = redux_1.applyMiddleware.apply(void 0, [epicMiddleware].concat(extraMiddleware));
     var rootReducer = redux_1.combineReducers(reducers);
     if (redux.rootReducer) {
-        rootReducer = redux.rootReducer(rootReducer);
+        rootReducer = redux.rootReducer(rootReducer, reducers);
     }
     var store = redux_1.createStore(rootReducer, composeEnhancers(middleware));
     // 配置 services
