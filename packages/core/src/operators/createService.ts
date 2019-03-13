@@ -30,7 +30,9 @@ interface ServiceOptions<T, E> {
   /** 重试次数 */
   retry?: number,
   /** 重试延迟 */
-  retryDelay?: number
+  retryDelay?: number,
+  /** 加载延迟 */
+  loadingDelay?: number
 }
 
 interface Result<T, E> {
@@ -65,17 +67,31 @@ export default function createFromService<T, E>(notification: Notification, serv
     options = {
       level: LEVEL.silent,
       retry: 0,
-      retryDelay: 0
+      retryDelay: 0,
+      loadingDelay: 0
     }
    ) {
-    store.dispatch({
-      type: SERVICE_LOADING_START_ACTION,
-      payload: {
-        service: serviceName
-      }
-    })
     const { success = noop, error = noop } = options.templates || serviceConfig.templates || {}
-    const { level, retry = 0, retryDelay = 0 } = options
+    const { level, retry = 0, retryDelay = 0, loadingDelay = 0 } = options
+
+    let timer = null
+
+    if (loadingDelay > 0) {
+      timer = setTimeout(() => store.dispatch({
+        type: SERVICE_LOADING_START_ACTION,
+        payload: {
+          service: serviceName
+        }
+      }), loadingDelay)
+    } else {
+      store.dispatch({
+        type: SERVICE_LOADING_START_ACTION,
+        payload: {
+          service: serviceName
+        }
+      })
+    }
+
     const successNotificate = (resp: T) => level >= LEVEL.all &&
       notification.success(success(resp))
     const errorNotificate = (err: E) => level >= LEVEL.error &&
@@ -118,34 +134,38 @@ export default function createFromService<T, E>(notification: Notification, serv
       )
 
     const [success$, error$]: Observable<Result<T, E>>[] = partition<Result<T, E>>(
-      response$.pipe(shareReplay(1)),
+      response$.pipe(tap(() => timer && clearTimeout(timer)), shareReplay(1)),
       (({success}) => success)
     )
 
+    success$.subscribe({
+      next: ({resp}) => {
+        successNotificate(resp)
+        store.dispatch({
+          type: SERVICE_LOADING_END_ACTION,
+          payload: {
+            service: serviceName
+          }
+        })
+      }
+    })
+
+    error$.subscribe({
+      next: (({error}) => {
+        errorNotificate(error)
+        store.dispatch({
+          type: SERVICE_ERROR_SET_ACTION,
+          payload: {
+            error,
+            service: serviceName
+          }
+        })
+      })
+    })
+
     return [
-      success$.pipe(
-        tap(({resp}) => {
-          successNotificate(resp)
-          store.dispatch({
-            type: SERVICE_LOADING_END_ACTION,
-            payload: {
-              service: serviceName
-            }
-          })
-        })
-      ),
-      error$.pipe(
-        tap(({error}) => {
-          errorNotificate(error)
-          store.dispatch({
-            type: SERVICE_ERROR_SET_ACTION,
-            payload: {
-              error,
-              service: serviceName
-            }
-          })
-        })
-      )
+      success$,
+      error$
     ]
   }
 }

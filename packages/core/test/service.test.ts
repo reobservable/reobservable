@@ -142,6 +142,25 @@ const user: Model<UserState, {user: UserState}> = {
         })
       )
     },
+    unfollowWithLoadingDelay(flow$, action$, state$, {services: {api}}) {
+      return flow$.pipe(
+        switchMap(({payload}) => {
+          const [success$, error$] = api(
+            'user/unfollow',
+            unfollowUser({name: payload.name}),
+            {
+              level: NOTIFICATION_LEVEL.all,
+              retry: 2,
+              retryDelay: 1000,
+              loadingDelay: 500
+            }
+          )
+          return merge(success$, error$).pipe(
+            mapTo(null)
+          )
+        })
+      )
+    },
     fetch(flow$) {
       const api: ApiServiceFunc = getService('api')
       return flow$.pipe(
@@ -581,5 +600,49 @@ describe('service', () => {
       createUnfollowUserSubscriber.resetHistory()
       done()
     }, 3000)
+  }).timeout(8000)
+
+  it('should show loading when the execution time of service is more than loading delay', done => {
+    nock(/api\.com/).post(/users\/unfollow/).delayConnection(800).reply(200)
+    store.dispatch({
+      type: 'user/unfollowWithLoadingDelay'
+    })
+    setTimeout(() => {
+      const { loading } = store.getState()
+      expect(loading).to.deep.include({
+        services: {}
+      })
+    }, 400)
+    setTimeout(() => {
+      const { loading } = store.getState()
+      expect(loading).to.deep.include({
+        services: {
+          'user/unfollow': true
+        }
+      })
+      done()
+    }, 700)
+  }).timeout(8000)
+
+  it('should hide loading when the execution time of service is less than loading delay', done => {
+    nock(/api\.com/).post(/users\/unfollow/).delayConnection(400).reply(200)
+    store.dispatch({
+      type: 'user/unfollowWithLoadingDelay'
+    })
+    setTimeout(() => {
+      const { loading } = store.getState()
+      expect(loading).to.deep.include({
+        services: {}
+      })
+    }, 300)
+    setTimeout(() => {
+      const { loading } = store.getState()
+      expect(loading).to.deep.include({
+        services: {
+          'user/unfollow': false
+        }
+      })
+      done()
+    }, 500)
   }).timeout(8000)
 })
