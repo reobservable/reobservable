@@ -31,16 +31,28 @@ function createFromService(notification, serviceConfig, store) {
         if (options === void 0) { options = {
             level: notification_1.LEVEL.silent,
             retry: 0,
-            retryDelay: 0
+            retryDelay: 0,
+            loadingDelay: 0
         }; }
-        store.dispatch({
-            type: actionTypes_1.SERVICE_LOADING_START_ACTION,
-            payload: {
-                service: serviceName
-            }
-        });
         var _a = options.templates || serviceConfig.templates || {}, _b = _a.success, success = _b === void 0 ? function_1.noop : _b, _c = _a.error, error = _c === void 0 ? function_1.noop : _c;
-        var level = options.level, _d = options.retry, retry = _d === void 0 ? 0 : _d, _e = options.retryDelay, retryDelay = _e === void 0 ? 0 : _e;
+        var level = options.level, _d = options.retry, retry = _d === void 0 ? 0 : _d, _e = options.retryDelay, retryDelay = _e === void 0 ? 0 : _e, _f = options.loadingDelay, loadingDelay = _f === void 0 ? 0 : _f;
+        var timer = null;
+        if (loadingDelay > 0) {
+            timer = setTimeout(function () { return store.dispatch({
+                type: actionTypes_1.SERVICE_LOADING_START_ACTION,
+                payload: {
+                    service: serviceName
+                }
+            }); }, loadingDelay);
+        }
+        else {
+            store.dispatch({
+                type: actionTypes_1.SERVICE_LOADING_START_ACTION,
+                payload: {
+                    service: serviceName
+                }
+            });
+        }
         var successNotificate = function (resp) { return level >= notification_1.LEVEL.all &&
             notification.success(success(resp)); };
         var errorNotificate = function (err) { return level >= notification_1.LEVEL.error &&
@@ -72,12 +84,12 @@ function createFromService(notification, serviceConfig, store) {
                     error: serviceConfig.errorSelector ? serviceConfig.errorSelector(error) : error
                 });
             }));
-        var _f = partition(response$.pipe(operators_1.shareReplay(1)), (function (_a) {
+        var _g = partition(response$.pipe(operators_1.tap(function () { return timer && clearTimeout(timer); }), operators_1.shareReplay(1)), (function (_a) {
             var success = _a.success;
             return success;
-        })), success$ = _f[0], error$ = _f[1];
-        return [
-            success$.pipe(operators_1.tap(function (_a) {
+        })), success$ = _g[0], error$ = _g[1];
+        success$.subscribe({
+            next: function (_a) {
                 var resp = _a.resp;
                 successNotificate(resp);
                 store.dispatch({
@@ -86,8 +98,10 @@ function createFromService(notification, serviceConfig, store) {
                         service: serviceName
                     }
                 });
-            })),
-            error$.pipe(operators_1.tap(function (_a) {
+            }
+        });
+        error$.subscribe({
+            next: (function (_a) {
                 var error = _a.error;
                 errorNotificate(error);
                 store.dispatch({
@@ -97,7 +111,11 @@ function createFromService(notification, serviceConfig, store) {
                         service: serviceName
                     }
                 });
-            }))
+            })
+        });
+        return [
+            success$,
+            error$
         ];
     };
 }

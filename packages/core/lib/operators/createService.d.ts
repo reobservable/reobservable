@@ -24,6 +24,8 @@ interface ServiceOptions<T, E> {
     retry?: number;
     /** 重试延迟 */
     retryDelay?: number;
+    /** 加载延迟 */
+    loadingDelay?: number;
 }
 interface Result<T, E> {
     resp?: T | undefined;

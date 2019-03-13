@@ -28,16 +28,28 @@ export default function createFromService(notification, serviceConfig, store) {
         if (options === void 0) { options = {
             level: LEVEL.silent,
             retry: 0,
-            retryDelay: 0
+            retryDelay: 0,
+            loadingDelay: 0
         }; }
-        store.dispatch({
-            type: SERVICE_LOADING_START_ACTION,
-            payload: {
-                service: serviceName
-            }
-        });
         var _a = options.templates || serviceConfig.templates || {}, _b = _a.success, success = _b === void 0 ? noop : _b, _c = _a.error, error = _c === void 0 ? noop : _c;
-        var level = options.level, _d = options.retry, retry = _d === void 0 ? 0 : _d, _e = options.retryDelay, retryDelay = _e === void 0 ? 0 : _e;
+        var level = options.level, _d = options.retry, retry = _d === void 0 ? 0 : _d, _e = options.retryDelay, retryDelay = _e === void 0 ? 0 : _e, _f = options.loadingDelay, loadingDelay = _f === void 0 ? 0 : _f;
+        var timer = null;
+        if (loadingDelay > 0) {
+            timer = setTimeout(function () { return store.dispatch({
+                type: SERVICE_LOADING_START_ACTION,
+                payload: {
+                    service: serviceName
+                }
+            }); }, loadingDelay);
+        }
+        else {
+            store.dispatch({
+                type: SERVICE_LOADING_START_ACTION,
+                payload: {
+                    service: serviceName
+                }
+            });
+        }
         var successNotificate = function (resp) { return level >= LEVEL.all &&
             notification.success(success(resp)); };
         var errorNotificate = function (err) { return level >= LEVEL.error &&
@@ -69,12 +81,12 @@ export default function createFromService(notification, serviceConfig, store) {
                     error: serviceConfig.errorSelector ? serviceConfig.errorSelector(error) : error
                 });
             }));
-        var _f = partition(response$.pipe(shareReplay(1)), (function (_a) {
+        var _g = partition(response$.pipe(tap(function () { return timer && clearTimeout(timer); }), shareReplay(1)), (function (_a) {
             var success = _a.success;
             return success;
-        })), success$ = _f[0], error$ = _f[1];
-        return [
-            success$.pipe(tap(function (_a) {
+        })), success$ = _g[0], error$ = _g[1];
+        success$.subscribe({
+            next: function (_a) {
                 var resp = _a.resp;
                 successNotificate(resp);
                 store.dispatch({
@@ -83,8 +95,10 @@ export default function createFromService(notification, serviceConfig, store) {
                         service: serviceName
                     }
                 });
-            })),
-            error$.pipe(tap(function (_a) {
+            }
+        });
+        error$.subscribe({
+            next: (function (_a) {
                 var error = _a.error;
                 errorNotificate(error);
                 store.dispatch({
@@ -94,7 +108,11 @@ export default function createFromService(notification, serviceConfig, store) {
                         service: serviceName
                     }
                 });
-            }))
+            })
+        });
+        return [
+            success$,
+            error$
         ];
     };
 }
