@@ -7,4 +7,4 @@ import axios from 'axios'
 import { SearchParam } from '@models/repo'
 
 export const fetch = (params: SearchParam) =>
-  axios.get('https://api.github.com/search/repositories', {params})
+  axios.get('https://api.github.com/search/repositories', { params })

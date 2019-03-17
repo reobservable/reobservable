@@ -10,24 +10,27 @@ import { LoadingState } from '@reobservable/core'
 import { RepoState } from '@models/repo'
 
 interface StateMapper {
-  repo: RepoState,
+  repo: RepoState
   loading: LoadingState
 }
 
 const Option = Select.Option
 const Search = Input.Search
 
-const ORDER_LIST = [{
-  text: '按 star 数目排序',
-  value: 'stars'
-}, {
-  text: '按 fork 数目排序',
-  value: 'forks'
-}]
+const ORDER_LIST = [
+  {
+    text: '按 star 数目排序',
+    value: 'stars'
+  },
+  {
+    text: '按 fork 数目排序',
+    value: 'forks'
+  }
+]
 
 interface Props {
-  sort: string,
-  query: string,
+  sort: string
+  query: string
   disabledSearch: boolean
 }
 
@@ -36,7 +39,7 @@ const ActionPanel: React.SFC<Props & DispatchProp> = props => {
 
   const handleSearch = (query: string) => {
     if (query === props.query) {
-      dispatch({type: 'repo/fetch'})
+      dispatch({ type: 'repo/fetch' })
     } else {
       dispatch({
         type: 'repo/change',
@@ -68,29 +71,31 @@ const ActionPanel: React.SFC<Props & DispatchProp> = props => {
       type='flex'
       align='middle'
       justify='end'
-      style={{marginBottom: 24}}
+      style={{ marginBottom: 24 }}
     >
-        <Col>
-          <Select value={sort} onChange={handleSortChange}>
-            {ORDER_LIST.map(option =>
-              <Option key={option.value} value={option.value}>{option.text}</Option>
-            )}
-          </Select>
-        </Col>
-        <Col>
-          <Search
-            placeholder='search user...'
-            onSearch={handleSearch}
-            disabled={disabledSearch}
-            style={{height: 32}}
-            enterButton
-          />
-        </Col>
+      <Col>
+        <Select value={sort} onChange={handleSortChange}>
+          {ORDER_LIST.map(option => (
+            <Option key={option.value} value={option.value}>
+              {option.text}
+            </Option>
+          ))}
+        </Select>
+      </Col>
+      <Col>
+        <Search
+          placeholder='search user...'
+          onSearch={handleSearch}
+          disabled={disabledSearch}
+          style={{ height: 32 }}
+          enterButton
+        />
+      </Col>
     </Row>
   )
 }
 
-const mapStateToProps = ({repo, loading}: StateMapper): Props => ({
+const mapStateToProps = ({ repo, loading }: StateMapper): Props => ({
   sort: repo.sort,
   query: repo.query,
   disabledSearch: loading.services['repo/fetch']

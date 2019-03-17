@@ -10,24 +10,27 @@ import { LoadingState } from '@reobservable/core'
 import { UserState } from '@models/user'
 
 interface StateMapper {
-  user: UserState,
+  user: UserState
   loading: LoadingState
 }
 
 const Option = Select.Option
 const Search = Input.Search
 
-const ORDER_LIST = [{
-  text: '按 followers 数目排序',
-  value: 'followers'
-}, {
-  text: '按 repos 数目排序',
-  value: 'repositories'
-}]
+const ORDER_LIST = [
+  {
+    text: '按 followers 数目排序',
+    value: 'followers'
+  },
+  {
+    text: '按 repos 数目排序',
+    value: 'repositories'
+  }
+]
 
 interface Props {
-  sort: string,
-  query: string,
+  sort: string
+  query: string
   disabledSearch: boolean
 }
 
@@ -44,7 +47,7 @@ const ActionPanel: React.SFC<Props & DispatchProp> = props => {
       }
     })
     if (query === props.query) {
-      dispatch({type: 'user/fetch'})
+      dispatch({ type: 'user/fetch' })
     } else {
       dispatch({
         type: 'user/change',
@@ -68,29 +71,31 @@ const ActionPanel: React.SFC<Props & DispatchProp> = props => {
       type='flex'
       align='middle'
       justify='end'
-      style={{marginBottom: 24}}
+      style={{ marginBottom: 24 }}
     >
-        <Col>
-          <Select value={sort} onChange={handleSortChange}>
-            {ORDER_LIST.map(option =>
-              <Option key={option.value} value={option.value}>{option.text}</Option>
-            )}
-          </Select>
-        </Col>
-        <Col>
-          <Search
-            placeholder='search user...'
-            onSearch={handleSearch}
-            disabled={disabledSearch}
-            style={{height: 32}}
-            enterButton
-          />
-        </Col>
+      <Col>
+        <Select value={sort} onChange={handleSortChange}>
+          {ORDER_LIST.map(option => (
+            <Option key={option.value} value={option.value}>
+              {option.text}
+            </Option>
+          ))}
+        </Select>
+      </Col>
+      <Col>
+        <Search
+          placeholder='search user...'
+          onSearch={handleSearch}
+          disabled={disabledSearch}
+          style={{ height: 32 }}
+          enterButton
+        />
+      </Col>
     </Row>
   )
 }
 
-const mapStateToProps = ({user, loading}: StateMapper): Props => ({
+const mapStateToProps = ({ user, loading }: StateMapper): Props => ({
   sort: user.sort,
   query: user.query,
   disabledSearch: loading.services['user/fetch']

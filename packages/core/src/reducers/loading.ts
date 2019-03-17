@@ -14,7 +14,10 @@ import {
   SERVICE_ERROR_SET_ACTION
 } from '../constants/actionTypes'
 
-export default function loading(state = {services: {}, flows: {}}, action: Action): Object {
+export default function loading(
+  state = { services: {}, flows: {} },
+  action: Action
+): Object {
   const { type } = action
   const payload = action.payload ? action.payload : {}
   switch (type) {

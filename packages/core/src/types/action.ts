@@ -1,4 +1,3 @@
-
 /**
  * action types
  * @author yoyoyohamapi
@@ -8,13 +7,13 @@ import { FLOW_END_INDICATOR } from '../constants/meta'
 import { ALIAS } from '../constants/symbols'
 
 export interface Action {
-  type: string,
-  payload?: any,
+  type: string
+  payload?: any
   [ALIAS]?: string
 }
 
 export interface EndAction {
-  type: string,
-  [FLOW_END_INDICATOR]: boolean,
+  type: string
+  [FLOW_END_INDICATOR]: boolean
   payload?: any
 }

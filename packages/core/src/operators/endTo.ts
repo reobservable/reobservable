@@ -14,7 +14,9 @@ import { FLOW_END_INDICATOR } from '../constants/meta'
  * @returns {Observable}
  * @method endTo
  */
-export default function endTo(action: Action): UnaryFunction<Observable<Action>, Observable<EndAction>> {
+export default function endTo(
+  action: Action
+): UnaryFunction<Observable<Action>, Observable<EndAction>> {
   return pipe(
     mapTo({
       ...action,

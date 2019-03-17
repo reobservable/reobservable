@@ -4,9 +4,17 @@
  * @ignore created 2018-08-03 12:43:11
  */
 import { Action } from '../types/action'
-import { LOADING_START_ACTION, ERROR_SET_ACTION, SERVICE_ERROR_SET_ACTION, SERVICE_LOADING_START_ACTION } from '../constants/actionTypes'
+import {
+  LOADING_START_ACTION,
+  ERROR_SET_ACTION,
+  SERVICE_ERROR_SET_ACTION,
+  SERVICE_LOADING_START_ACTION
+} from '../constants/actionTypes'
 
-export default function error(state = {flows: {}, services: {}}, action: Action): Object {
+export default function error(
+  state = { flows: {}, services: {} },
+  action: Action
+): Object {
   const { type } = action
   const payload = action.payload ? action.payload : {}
   switch (type) {

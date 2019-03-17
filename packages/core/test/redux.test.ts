@@ -12,7 +12,7 @@ import { Middleware, combineReducers } from 'redux'
 
 describe('redux', () => {
   it('should support root reducer wrapper#1', () => {
-    const model: Model<{name: string}> = {
+    const model: Model<{ name: string }> = {
       name: 'model',
       state: {
         name: 'model'
@@ -48,7 +48,7 @@ describe('redux', () => {
 
     store.dispatch({
       type: 'model/dangerouslyChangeName',
-      payload: { name: 'dangerouslyChangedName'}
+      payload: { name: 'dangerouslyChangedName' }
     })
 
     const { name } = store.getState().model
@@ -56,7 +56,7 @@ describe('redux', () => {
   })
 
   it('should support root reducer wrapper#2', () => {
-    const model: Model<{name: string}> = {
+    const model: Model<{ name: string }> = {
       name: 'model',
       state: {
         name: 'model'
@@ -94,7 +94,7 @@ describe('redux', () => {
     })
 
     store.dispatch({
-      type: 'count/incr',
+      type: 'count/incr'
     })
 
     const { name } = store.getState().model
@@ -117,7 +117,7 @@ describe('redux', () => {
       }
     })
 
-    store.dispatch({type: 'fetch'})
+    store.dispatch({ type: 'fetch' })
 
     expect(fake.calledOnce).to.be.true
   })
@@ -136,7 +136,7 @@ describe('redux', () => {
       }
     })
 
-    store.dispatch({type: 'fetch'})
+    store.dispatch({ type: 'fetch' })
 
     expect(fake.calledOnce).to.be.true
   })

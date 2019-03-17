@@ -7,4 +7,4 @@ import axios from 'axios'
 import { SearchParam } from '@models/user'
 
 export const fetch = (params: SearchParam) =>
-  axios.get('https://api.github.com/search/users', {params})
+  axios.get('https://api.github.com/search/users', { params })

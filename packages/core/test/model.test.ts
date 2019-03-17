@@ -11,33 +11,33 @@ import { init, getSelectors } from '../src'
 import Model from '../src/types/Model'
 
 interface User {
-  id: number,
-  name: string,
+  id: number
+  name: string
   age: number
 }
 
 interface Post {
-  id: number,
-  title: string,
+  id: number
+  title: string
   content: string
 }
 
 interface Pagination {
-  page: number,
-  pageSize: number,
+  page: number
+  pageSize: number
   total: number
 }
 
 interface UserState {
-  list: User[],
-  pagination: Pagination,
-  current: number,
+  list: User[]
+  pagination: Pagination
+  current: number
   editingPost: number
 }
 
 interface PostState {
-  list: Post[],
-  pagination: Pagination,
+  list: Post[]
+  pagination: Pagination
   current: string
 }
 
@@ -52,7 +52,7 @@ const userInitialState = {
   editingPost: null
 }
 
-const user: Model<UserState, {user: UserState}> = {
+const user: Model<UserState, { user: UserState }> = {
   name: 'user',
   state: userInitialState,
   reducers: {
@@ -60,7 +60,7 @@ const user: Model<UserState, {user: UserState}> = {
       const { list, total } = payload
       return { ...state, list, pagination: { ...state.pagination, total } }
     },
-    'post/create': function (state, payload) {
+    'post/create': function(state, payload) {
       const { id } = payload
       return { ...state, editingPost: id }
     },
@@ -69,9 +69,9 @@ const user: Model<UserState, {user: UserState}> = {
     }
   },
   selectors: {
-    youngsters: (state) => {
+    youngsters: state => {
       const { list } = state.user
-      return list.filter(({age}) => age < 30)
+      return list.filter(({ age }) => age < 30)
     }
   },
   flows: {
@@ -81,9 +81,9 @@ const user: Model<UserState, {user: UserState}> = {
           type: 'user/fetchSuccess',
           payload: {
             list: [
-              {id: 1, name: 'Messi', age: 31},
-              {id: 2, name: 'Neymar', age: 26},
-              {id: 3, name: 'Ronaldo', age: 33}
+              { id: 1, name: 'Messi', age: 31 },
+              { id: 2, name: 'Neymar', age: 26 },
+              { id: 3, name: 'Ronaldo', age: 33 }
             ],
             total: 20
           }
@@ -94,8 +94,8 @@ const user: Model<UserState, {user: UserState}> = {
 }
 
 const post: Model<PostState> = {
-   name: 'post',
-   state: {
+  name: 'post',
+  state: {
     list: [],
     pagination: {
       page: 1,
@@ -103,14 +103,13 @@ const post: Model<PostState> = {
       total: 0
     },
     current: null
-   },
-   reducers: {
+  },
+  reducers: {
     init(state, payload) {
       return state
     }
-   },
-   flows: {
-   }
+  },
+  flows: {}
 }
 
 describe('model', () => {
@@ -174,9 +173,9 @@ describe('model', () => {
       })
       const { list, pagination } = store.getState().user
       expect(list).to.have.deep.members([
-        {id: 1, name: 'Messi', age: 31},
-        {id: 2, name: 'Neymar', age: 26},
-        {id: 3, name: 'Ronaldo', age: 33}
+        { id: 1, name: 'Messi', age: 31 },
+        { id: 2, name: 'Neymar', age: 26 },
+        { id: 3, name: 'Ronaldo', age: 33 }
       ])
       expect(pagination.total).to.equal(20)
     })
@@ -221,12 +220,12 @@ describe('model', () => {
             total: 10
           },
           current: 4,
-          list: [{id: 1, name: 'Messi', age: 31}]
+          list: [{ id: 1, name: 'Messi', age: 31 }]
         }
       })
       const { user } = store.getState()
       expect(user).to.deep.include({
-        list: [{id: 1, name: 'Messi', age: 31}],
+        list: [{ id: 1, name: 'Messi', age: 31 }],
         pagination: {
           page: 1,
           pageSize: 10,
@@ -286,13 +285,11 @@ describe('model', () => {
     beforeEach(initStore)
 
     it('should create selectors', () => {
-     store.dispatch({
-       type: 'user/fetch'
-     })
-     const youngsters = getSelectors('user').youngsters(store.getState())
-     expect(youngsters).to.deep.equal([
-      {id: 2, name: 'Neymar', age: 26}
-     ])
+      store.dispatch({
+        type: 'user/fetch'
+      })
+      const youngsters = getSelectors('user').youngsters(store.getState())
+      expect(youngsters).to.deep.equal([{ id: 2, name: 'Neymar', age: 26 }])
     })
   })
 })

@@ -6,5 +6,7 @@
 import { AxiosResponse, AxiosError } from 'axios'
 import { ServiceConfig, ServiceFunc } from '@reobservable/core'
 
-export interface ApiService extends ServiceConfig<AxiosResponse<{data: any}>, AxiosError> {}
-export interface ApiServiceFunc<T = any> extends ServiceFunc<AxiosResponse<T>, AxiosError> {}
+export interface ApiService
+  extends ServiceConfig<AxiosResponse<{ data: any }>, AxiosError> {}
+export interface ApiServiceFunc<T = any>
+  extends ServiceFunc<AxiosResponse<T>, AxiosError> {}

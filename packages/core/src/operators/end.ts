@@ -14,7 +14,9 @@ import { FLOW_END_INDICATOR } from '../constants/meta'
  * @returns {Observable}
  * @method end
  */
-export default function end(project: (value: any) => Action): UnaryFunction<Observable<any>, Observable<EndAction>> {
+export default function end(
+  project: (value: any) => Action
+): UnaryFunction<Observable<any>, Observable<EndAction>> {
   return pipe(
     map((action: Action) => ({
       ...project(action),

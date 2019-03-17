@@ -19,33 +19,34 @@ const request = axios.create({
 })
 
 interface ApiService extends ServiceConfig<AxiosResponse, AxiosError> {}
-interface ApiServiceFunc<T = any> extends ServiceFunc<AxiosResponse<T>, AxiosError> {}
+interface ApiServiceFunc<T = any>
+  extends ServiceFunc<AxiosResponse<T>, AxiosError> {}
 
 interface User {
-  id: number,
-  name: string,
+  id: number
+  name: string
   age: number
 }
 
 interface Pagination {
-  page: number,
-  pageSize: number,
+  page: number
+  pageSize: number
   total: number
 }
 
 interface UserState {
-  list: User[],
-  pagination: Pagination,
-  current: number,
+  list: User[]
+  pagination: Pagination
+  current: number
   editingPost: number
 }
 
 const customTemplates = {
   success: (resp: AxiosResponse) => `follow ${resp.data.user} success`,
-  error: (error) => `Error: ${error}`
+  error: error => `Error: ${error}`
 }
 
-const user: Model<UserState, {user: UserState}> = {
+const user: Model<UserState, { user: UserState }> = {
   name: 'user',
   state: {
     list: [],
@@ -79,75 +80,63 @@ const user: Model<UserState, {user: UserState}> = {
       const api = getService('api')
       return flow$.pipe(
         switchMap(() => {
-          const [success$, error$] = api(
-            'user/follow',
-            followUser({}),
-            {
-              level: NOTIFICATION_LEVEL.all,
-              templates: customTemplates
-            }
-          )
-          return merge(success$, error$).pipe(
-            mapTo(null)
-          )
+          const [success$, error$] = api('user/follow', followUser({}), {
+            level: NOTIFICATION_LEVEL.all,
+            templates: customTemplates
+          })
+          return merge(success$, error$).pipe(mapTo(null))
         })
       )
     },
-    rename(flow$, action$, state$, {services: { api }}) {
+    rename(flow$, action$, state$, { services: { api } }) {
       return flow$.pipe(
-        switchMap(({payload}) => {
+        switchMap(({ payload }) => {
           const [success$, error$] = api(
             'user/rename',
-            renameUser({name: payload.name}),
-            {level: NOTIFICATION_LEVEL.all}
+            renameUser({ name: payload.name }),
+            { level: NOTIFICATION_LEVEL.all }
           )
-          return merge(success$, error$).pipe(
-            mapTo(null)
-          )
+          return merge(success$, error$).pipe(mapTo(null))
         })
       )
     },
-    unfollow(flow$, action$, state$, {services: { api }}) {
+    unfollow(flow$, action$, state$, { services: { api } }) {
       return flow$.pipe(
-        switchMap(({payload}) => {
+        switchMap(({ payload }) => {
           const [success$, error$] = api(
             'user/unfollow',
-            unfollowUser({name: payload.name}),
+            unfollowUser({ name: payload.name }),
             {
               level: NOTIFICATION_LEVEL.all,
               retry: 2
             }
           )
-          return merge(success$, error$).pipe(
-            mapTo(null)
-          )
+          return merge(success$, error$).pipe(mapTo(null))
         })
       )
     },
-    unfollowWithRetryDelay(flow$, action$, state$, {services: { api }}) {
+    unfollowWithRetryDelay(flow$, action$, state$, { services: { api } }) {
       return flow$.pipe(
-        switchMap(({payload}) => {
+        switchMap(({ payload }) => {
           const [success$, error$] = api(
             'user/unfollow',
-            unfollowUser({name: payload.name}),
+            unfollowUser({ name: payload.name }),
             {
               level: NOTIFICATION_LEVEL.all,
               retry: 2,
               retryDelay: 1000
             }
           )
-          return merge(success$, error$).pipe(
-            mapTo(null)
-          )
+          return merge(success$, error$).pipe(mapTo(null))
         })
       )
     },
-    unfollowWithLoadingDelay(flow$, action$, state$, {services: {api}}) {
+    unfollowWithLoadingDelay(flow$, action$, state$, { services: { api } }) {
       return flow$.pipe(
-        switchMap(({payload}) => {
+        switchMap(({ payload }) => {
           const [success$, error$] = api(
             'user/unfollow',
-            unfollowUser({name: payload.name}),
+            unfollowUser({ name: payload.name }),
             {
               level: NOTIFICATION_LEVEL.all,
               retry: 2,
@@ -155,9 +144,7 @@ const user: Model<UserState, {user: UserState}> = {
               loadingDelay: 500
             }
           )
-          return merge(success$, error$).pipe(
-            mapTo(null)
-          )
+          return merge(success$, error$).pipe(mapTo(null))
         })
       )
     },
@@ -165,14 +152,11 @@ const user: Model<UserState, {user: UserState}> = {
       const api: ApiServiceFunc = getService('api')
       return flow$.pipe(
         switchMap(() => {
-          const [success$, error$] = api(
-            'user/fetch',
-            fetchUsers({})
-          )
+          const [success$, error$] = api('user/fetch', fetchUsers({}))
 
           return merge(
             success$.pipe(
-              map(({resp: {data}}) => ({
+              map(({ resp: { data } }) => ({
                 type: 'user/fetchSuccess',
                 payload: {
                   total: data.total,
@@ -195,32 +179,35 @@ const user: Model<UserState, {user: UserState}> = {
 
 const apiService: ApiService = {
   templates: {
-    success: (resp) => 'call api success',
-    error: (error) => `call api error`
+    success: resp => 'call api success',
+    error: error => `call api error`
   },
   errorSelector: error => error.message
 }
 
 function fetchUsers(params) {
-  return request.get('/users', {params})
+  return request.get('/users', { params })
 }
 
 function renameUser(params) {
-  return request.post('/users/rename', {params})
+  return request.post('/users/rename', { params })
 }
 
 function followUser(params) {
-  return request.post('/users/follow', {params})
+  return request.post('/users/follow', { params })
 }
 
 const createUnfollowUserSubscriber = sinon.spy((observer, params) => {
-  request.post('/users/unfollow', {params})
+  request
+    .post('/users/unfollow', { params })
     .then(result => observer.next(result))
     .catch(error => observer.error(error))
 })
 
 function unfollowUser(params) {
-  return Observable.create(observer => createUnfollowUserSubscriber(observer, params))
+  return Observable.create(observer =>
+    createUnfollowUserSubscriber(observer, params)
+  )
 }
 
 describe('service', () => {
@@ -250,14 +237,16 @@ describe('service', () => {
   })
 
   it('should set loading true when service start', () => {
-    nock(/api\.com/).get(/users/).reply(200, {
-      items: [
-        {id: 1, name: 'Messi', age: 31},
-        {id: 2, name: 'Neymar', age: 26},
-        {id: 3, name: 'Ronaldo', age: 33}
-      ],
-      total: 20
-    })
+    nock(/api\.com/)
+      .get(/users/)
+      .reply(200, {
+        items: [
+          { id: 1, name: 'Messi', age: 31 },
+          { id: 2, name: 'Neymar', age: 26 },
+          { id: 3, name: 'Ronaldo', age: 33 }
+        ],
+        total: 20
+      })
 
     store.dispatch({
       type: 'user/fetch'
@@ -270,15 +259,17 @@ describe('service', () => {
     })
   })
 
-  it('should set loading false when service end', (done) => {
-    nock(/api\.com/).get(/users/).reply(200, {
-      items: [
-        {id: 1, name: 'Messi', age: 31},
-        {id: 2, name: 'Neymar', age: 26},
-        {id: 3, name: 'Ronaldo', age: 33}
-      ],
-      total: 20
-    })
+  it('should set loading false when service end', done => {
+    nock(/api\.com/)
+      .get(/users/)
+      .reply(200, {
+        items: [
+          { id: 1, name: 'Messi', age: 31 },
+          { id: 2, name: 'Neymar', age: 26 },
+          { id: 3, name: 'Ronaldo', age: 33 }
+        ],
+        total: 20
+      })
     store.dispatch({
       type: 'user/fetch'
     })
@@ -293,8 +284,10 @@ describe('service', () => {
     }, 10)
   })
 
-  it('should set loading false when service error', (done) => {
-    nock(/api\.com/).get(/users/).replyWithError({})
+  it('should set loading false when service error', done => {
+    nock(/api\.com/)
+      .get(/users/)
+      .replyWithError({})
     store.dispatch({
       type: 'user/fetch'
     })
@@ -309,11 +302,13 @@ describe('service', () => {
     }, 10)
   })
 
-  it('should set error when service error', (done) => {
-    nock(/api\.com/).get(/users/).replyWithError({
-      message: 'Error!',
-      code: -1
-    })
+  it('should set error when service error', done => {
+    nock(/api\.com/)
+      .get(/users/)
+      .replyWithError({
+        message: 'Error!',
+        code: -1
+      })
     store.dispatch({
       type: 'user/fetch'
     })
@@ -328,11 +323,13 @@ describe('service', () => {
     }, 10)
   })
 
-  it('should reset error when service restart', (done) => {
-    nock(/api\.com/).get(/users/).replyWithError({
-      message: 'Error!',
-      code: -1
-    })
+  it('should reset error when service restart', done => {
+    nock(/api\.com/)
+      .get(/users/)
+      .replyWithError({
+        message: 'Error!',
+        code: -1
+      })
     store.dispatch({
       type: 'user/fetch'
     })
@@ -348,26 +345,29 @@ describe('service', () => {
       })
       done()
     }, 10)
+  })
 
- })
-
-  it('should not stop epic when service error', (done) => {
-    nock(/api\.com/).get(/users/).replyWithError({
-      message: 'Error!',
-      code: -1
-    })
+  it('should not stop epic when service error', done => {
+    nock(/api\.com/)
+      .get(/users/)
+      .replyWithError({
+        message: 'Error!',
+        code: -1
+      })
     store.dispatch({
       type: 'user/fetch'
     })
     setTimeout(() => {
-      nock(/api\.com/).get(/users/).reply(200, {
-        items: [
-          {id: 1, name: 'Messi', age: 31},
-          {id: 2, name: 'Neymar', age: 26},
-          {id: 3, name: 'Ronaldo', age: 33}
-        ],
-        total: 20
-      })
+      nock(/api\.com/)
+        .get(/users/)
+        .reply(200, {
+          items: [
+            { id: 1, name: 'Messi', age: 31 },
+            { id: 2, name: 'Neymar', age: 26 },
+            { id: 3, name: 'Ronaldo', age: 33 }
+          ],
+          total: 20
+        })
       store.dispatch({
         type: 'user/fetch'
       })
@@ -375,9 +375,9 @@ describe('service', () => {
         const { user } = store.getState()
         expect(user).to.deep.include({
           list: [
-            {id: 1, name: 'Messi', age: 31},
-            {id: 2, name: 'Neymar', age: 26},
-            {id: 3, name: 'Ronaldo', age: 33}
+            { id: 1, name: 'Messi', age: 31 },
+            { id: 2, name: 'Neymar', age: 26 },
+            { id: 3, name: 'Ronaldo', age: 33 }
           ],
           pagination: {
             page: 1,
@@ -390,9 +390,11 @@ describe('service', () => {
     }, 10)
   })
 
-  it('should notificate success message when level is all', (done) => {
+  it('should notificate success message when level is all', done => {
     const spy = sinon.spy(apiService.templates, 'success')
-    nock(/api\.com/).post(/users\/rename/).reply(200, {})
+    nock(/api\.com/)
+      .post(/users\/rename/)
+      .reply(200, {})
     store.dispatch({
       type: 'user/rename',
       payload: { name: 'john' }
@@ -404,9 +406,11 @@ describe('service', () => {
     }, 10)
   })
 
-  it('should not notificate success message when level is greater than error', (done) => {
+  it('should not notificate success message when level is greater than error', done => {
     const spy = sinon.spy(apiService.templates, 'error')
-    nock(/api\.com/).post(/users\/rename/).replyWithError({message: 'Error!'})
+    nock(/api\.com/)
+      .post(/users\/rename/)
+      .replyWithError({ message: 'Error!' })
     store.dispatch({
       type: 'user/rename',
       payload: { name: 'john' }
@@ -418,9 +422,11 @@ describe('service', () => {
     }, 10)
   })
 
-  it('should notificate none messages when level is silent', (done) => {
+  it('should notificate none messages when level is silent', done => {
     const spy = sinon.spy(apiService.templates, 'success')
-    nock(/api\.com/).get(/users/).reply(200, {})
+    nock(/api\.com/)
+      .get(/users/)
+      .reply(200, {})
     store.dispatch({
       type: 'user/fetch'
     })
@@ -431,11 +437,13 @@ describe('service', () => {
     }, 10)
   })
 
-  it('should support service success notification template', (done) => {
+  it('should support service success notification template', done => {
     const spy = sinon.spy(customTemplates, 'success')
-    nock(/api\.com/).post(/users\/follow/).reply(200, {
-      user: 'tom'
-    })
+    nock(/api\.com/)
+      .post(/users\/follow/)
+      .reply(200, {
+        user: 'tom'
+      })
     store.dispatch({
       type: 'user/follow'
     })
@@ -447,12 +455,14 @@ describe('service', () => {
     }, 10)
   })
 
-  it('should support service error notification template', (done) => {
+  it('should support service error notification template', done => {
     const spy = sinon.spy(customTemplates, 'error')
-    nock(/api\.com/).post(/users\/follow/).replyWithError({
-      code: -1,
-      message: 'unknown error'
-    })
+    nock(/api\.com/)
+      .post(/users\/follow/)
+      .replyWithError({
+        code: -1,
+        message: 'unknown error'
+      })
     store.dispatch({
       type: 'user/follow'
     })
@@ -464,7 +474,7 @@ describe('service', () => {
     }, 10)
   })
 
-  it('should support custom success predicate function', (done) => {
+  it('should support custom success predicate function', done => {
     const service: ServiceConfig<AxiosResponse, AxiosError> = {
       isSuccess: resp => resp.data.code !== -1,
       errorSelector: resp => resp.data.message
@@ -476,14 +486,18 @@ describe('service', () => {
         api: service
       }
     })
-    nock(/api\.com/).post(/users\/follow/).reply(200, {
-      code: -1,
-      message: 'unknown error'
-    })
-    nock(/api\.com/).get(/users/).reply(200, {
-      code: 1,
-      message: ''
-    })
+    nock(/api\.com/)
+      .post(/users\/follow/)
+      .reply(200, {
+        code: -1,
+        message: 'unknown error'
+      })
+    nock(/api\.com/)
+      .get(/users/)
+      .reply(200, {
+        code: 1,
+        message: ''
+      })
     store.dispatch({
       type: 'user/follow'
     })
@@ -504,7 +518,7 @@ describe('service', () => {
     }, 10)
   })
 
-  it('should support default error selector when service.isSuccess has been set', (done) => {
+  it('should support default error selector when service.isSuccess has been set', done => {
     const service: ServiceConfig<AxiosResponse, AxiosError> = {
       isSuccess: resp => resp.data.code !== -1
     }
@@ -514,10 +528,12 @@ describe('service', () => {
         api: service
       }
     })
-    nock(/api\.com/).post(/users\/follow/).reply(200, {
-      code: -1,
-      message: 'unknown error'
-    })
+    nock(/api\.com/)
+      .post(/users\/follow/)
+      .reply(200, {
+        code: -1,
+        message: 'unknown error'
+      })
     store.dispatch({
       type: 'user/follow'
     })
@@ -532,17 +548,19 @@ describe('service', () => {
     }, 10)
   })
 
-  it('should support default error selector when service.isSuccess has not been set', (done) => {
+  it('should support default error selector when service.isSuccess has not been set', done => {
     store = init({
       models: { user },
       services: {
         api: { ...apiService, errorSelector: null }
       }
     })
-    nock(/api\.com/).post(/users\/follow/).replyWithError({
-      code: -1,
-      message: 'unknown error'
-    })
+    nock(/api\.com/)
+      .post(/users\/follow/)
+      .replyWithError({
+        code: -1,
+        message: 'unknown error'
+      })
     store.dispatch({
       type: 'user/follow'
     })
@@ -553,14 +571,16 @@ describe('service', () => {
     }, 10)
   })
 
-  it('should support retry', (done) => {
+  it('should support retry', done => {
     store = init({
       models: { user },
       services: {
         api: apiService
       }
     })
-    nock(/api\.com/).post(/users\/unfollow/).replyWithError('error')
+    nock(/api\.com/)
+      .post(/users\/unfollow/)
+      .replyWithError('error')
     store.dispatch({
       type: 'user/unfollow'
     })
@@ -573,17 +593,19 @@ describe('service', () => {
     }, 1000)
   }).timeout(2000)
 
-  it('should support retryDelay', (done) => {
+  it('should support retryDelay', done => {
     store = init({
       models: { user },
       services: {
         api: apiService
       }
     })
-    nock(/api\.com/).post(/users\/unfollow/).replyWithError({
-      code: -1,
-      message: 'unknown error'
-    })
+    nock(/api\.com/)
+      .post(/users\/unfollow/)
+      .replyWithError({
+        code: -1,
+        message: 'unknown error'
+      })
     store.dispatch({
       type: 'user/unfollowWithRetryDelay'
     })
@@ -603,7 +625,10 @@ describe('service', () => {
   }).timeout(8000)
 
   it('should show loading when the execution time of service is more than loading delay', done => {
-    nock(/api\.com/).post(/users\/unfollow/).delayConnection(800).reply(200)
+    nock(/api\.com/)
+      .post(/users\/unfollow/)
+      .delayConnection(800)
+      .reply(200)
     store.dispatch({
       type: 'user/unfollowWithLoadingDelay'
     })
@@ -625,7 +650,10 @@ describe('service', () => {
   }).timeout(8000)
 
   it('should hide loading when the execution time of service is less than loading delay', done => {
-    nock(/api\.com/).post(/users\/unfollow/).delayConnection(400).reply(200)
+    nock(/api\.com/)
+      .post(/users\/unfollow/)
+      .delayConnection(400)
+      .reply(200)
     store.dispatch({
       type: 'user/unfollowWithLoadingDelay'
     })

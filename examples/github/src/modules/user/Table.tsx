@@ -12,25 +12,30 @@ import { LoadingState, getSelectors, Symbols } from '@reobservable/core'
 import { User, UserState } from '@models/user'
 
 interface StateMapper {
-  user: UserState,
+  user: UserState
   loading: LoadingState
 }
 
-const columns: ColumnProps<User>[] = [{
-  key: '_rank',
-  title: '排名',
-  width: 150,
-  render: (text: string, record: User, index: number) => index + 1
-}, {
-  key: 'username',
-  dataIndex: 'login',
-  title: '用户',
-  render: (text: string, record: User) => {
-    return (
-      <a href={record.html_url} target='_blank'>{text}</a>
-    )
+const columns: ColumnProps<User>[] = [
+  {
+    key: '_rank',
+    title: '排名',
+    width: 150,
+    render: (text: string, record: User, index: number) => index + 1
+  },
+  {
+    key: 'username',
+    dataIndex: 'login',
+    title: '用户',
+    render: (text: string, record: User) => {
+      return (
+        <a href={record.html_url} target='_blank'>
+          {text}
+        </a>
+      )
+    }
   }
-}]
+]
 
 const Table: React.SFC<TableProps<User> & DispatchProp> = props => {
   const { dataSource, pagination, loading, dispatch } = props
@@ -64,7 +69,7 @@ const Table: React.SFC<TableProps<User> & DispatchProp> = props => {
 
 const mapStateToProps = (state: StateMapper): TableProps<User> => {
   const { user, loading } = state
-  return  {
+  return {
     dataSource: user.list,
     pagination: getSelectors('user').pagination(state),
     loading: user.isSilentLoading ? false : loading.services['user/fetch']

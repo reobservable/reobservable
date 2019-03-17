@@ -1,4 +1,3 @@
-
 /**
  * reobservable core
  * @author yoyoyohamapi
@@ -6,9 +5,22 @@
  */
 import { merge, of, throwError } from 'rxjs'
 import { mergeMap, mapTo, catchError, map } from 'rxjs/operators'
-import { createEpicMiddleware, ofType, combineEpics, ActionsObservable, StateObservable } from 'redux-observable'
+import {
+  createEpicMiddleware,
+  ofType,
+  combineEpics,
+  ActionsObservable,
+  StateObservable
+} from 'redux-observable'
 import { composeWithDevTools } from 'redux-devtools-extension'
-import { combineReducers, applyMiddleware, createStore, Store, Middleware, Reducer } from 'redux'
+import {
+  combineReducers,
+  applyMiddleware,
+  createStore,
+  Store,
+  Middleware,
+  Reducer
+} from 'redux'
 import * as mergeWith from 'lodash.mergewith'
 import * as cloneDeep from 'lodash.clonedeep'
 import * as invariant from 'invariant'
@@ -20,8 +32,15 @@ import { getPayload, actionSanitizer } from './utils/action'
 import { Action } from './types/action'
 import end from './operators/end'
 import endTo from './operators/endTo'
-import createService, { ServiceConfig, ServiceFunc } from './operators/createService'
-import { LOADING_START_ACTION, LOADING_END_ACTION, ERROR_SET_ACTION } from './constants/actionTypes'
+import createService, {
+  ServiceConfig,
+  ServiceFunc
+} from './operators/createService'
+import {
+  LOADING_START_ACTION,
+  LOADING_END_ACTION,
+  ERROR_SET_ACTION
+} from './constants/actionTypes'
 import { FLOW_END_INDICATOR } from './constants/meta'
 import { Notification } from './types/Notification'
 import { noop } from './utils/function'
@@ -35,25 +54,28 @@ interface Models {
 }
 
 interface ReduxConfig {
-  middleware?: Middleware | [Middleware],
-  rootReducer?: (reducer: Reducer, reducers: {[key: string]: Reducer}) => Reducer,
+  middleware?: Middleware | [Middleware]
+  rootReducer?: (
+    reducer: Reducer,
+    reducers: { [key: string]: Reducer }
+  ) => Reducer
 }
 
 interface Config {
-  models?: Models,
-  redux?: ReduxConfig,
-  notification?: Notification,
+  models?: Models
+  redux?: ReduxConfig
+  notification?: Notification
   services?: {
-    [serviceName: string]: ServiceConfig<any, any>
+    [serviceName: string]: ServiceConfig<any, any>;
   }
 }
 
-export type InitFunc  = (config: Config) => Store
+export type InitFunc = (config: Config) => Store
 
-const selectors: {[selectorsName: string]: Selectors<any>} = {}
+const selectors: { [selectorsName: string]: Selectors<any> } = {}
 
 const services: {
-  [stringName: string]: ServiceFunc<any, any>
+  [stringName: string]: ServiceFunc<any, any>;
 } = {}
 
 let notification: Notification = {
@@ -73,11 +95,11 @@ const composeEnhancers = composeWithDevTools({
   actionSanitizer
 })
 
-export const init: InitFunc = (config) => {
+export const init: InitFunc = config => {
   const { models = {}, redux = {} } = config
   notification = {
     ...notification,
-    ...(config.notification || {}),
+    ...(config.notification || {})
   }
 
   const epics = []
@@ -92,7 +114,10 @@ export const init: InitFunc = (config) => {
    * @param {*} mode
    */
   const createReducer = (model: Model<any>) => {
-    invariant(!reducers.hasOwnProperty(model.name), `model ${model.name} has been defined`)
+    invariant(
+      !reducers.hasOwnProperty(model.name),
+      `model ${model.name} has been defined`
+    )
     reducers[model.name] = function(state = model.state, action: Action) {
       const { type } = action
       const payload = getPayload(action)
@@ -120,7 +145,10 @@ export const init: InitFunc = (config) => {
         default: {
           const [modelName, reducerName] = type.split('/')
 
-          if (modelName === model.name && typeof model.reducers[reducerName] === 'function') {
+          if (
+            modelName === model.name &&
+            typeof model.reducers[reducerName] === 'function'
+          ) {
             return model.reducers[reducerName](state, payload)
           }
 
@@ -129,7 +157,7 @@ export const init: InitFunc = (config) => {
           }
 
           return state
-       }
+        }
       }
     }
   }
@@ -140,11 +168,15 @@ export const init: InitFunc = (config) => {
    * @param flow
    */
   const createEpic = (actionType: string, flow: Flow) => {
-    return function epic<S>(action$: ActionsObservable<Action>, state$: StateObservable<S>, dependencies: Dependencies) {
+    return function epic<S>(
+      action$: ActionsObservable<Action>,
+      state$: StateObservable<S>,
+      dependencies: Dependencies
+    ) {
       const flow$ = flow(
         action$.pipe(
           ofType<Action, Action>(actionType),
-          map(action => ({...action, payload: getPayload(action)}))
+          map(action => ({ ...action, payload: getPayload(action) }))
         ),
         action$,
         state$,
@@ -176,7 +208,7 @@ export const init: InitFunc = (config) => {
               return of(action)
             }
           }),
-          catchError((error) => {
+          catchError(error => {
             console.error(`@reobservable[flow ${actionType} error]`, error)
             return of({
               type: ERROR_SET_ACTION,
@@ -223,22 +255,19 @@ export const init: InitFunc = (config) => {
   })
 
   const extraMiddleware = redux.middleware
-    ? Array.isArray(redux.middleware) ? redux.middleware : [redux.middleware]
+    ? Array.isArray(redux.middleware)
+      ? redux.middleware
+      : [redux.middleware]
     : []
 
-  const middleware = applyMiddleware(
-    epicMiddleware, ...extraMiddleware
-  )
+  const middleware = applyMiddleware(epicMiddleware, ...extraMiddleware)
 
   let rootReducer = combineReducers(reducers)
   if (redux.rootReducer) {
     rootReducer = redux.rootReducer(rootReducer, reducers)
   }
 
-  const store = createStore(
-    rootReducer,
-    composeEnhancers(middleware)
-  )
+  const store = createStore(rootReducer, composeEnhancers(middleware))
 
   // 配置 services
   Object.keys(config.services || {}).forEach(key => {

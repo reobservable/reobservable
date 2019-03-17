@@ -36,8 +36,8 @@ const store = init({
   services: {
     api: {
       templates: {
-        success: (resp) => 'success',
-        error: (error) => `error`
+        success: resp => 'success',
+        error: error => `error`
       }
     } as ApiService
   }

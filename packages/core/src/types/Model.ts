@@ -15,10 +15,10 @@ export interface Reducers<S> {
 }
 
 export interface Dependencies<T = any, E = any> {
-  end: typeof end,
-  endTo: typeof endTo,
+  end: typeof end
+  endTo: typeof endTo
   services: {
-    [serviceName: string]: ServiceFunc<T, E>
+    [serviceName: string]: ServiceFunc<T, E>;
   }
 }
 
@@ -40,9 +40,9 @@ export interface Selectors<T, P = any> {
 }
 
 export default interface Model<S, R = any> {
-  readonly name: string,
-  readonly state?: S,
-  readonly reducers?: Reducers<S>,
-  readonly flows?: Flows<R>,
+  readonly name: string
+  readonly state?: S
+  readonly reducers?: Reducers<S>
+  readonly flows?: Flows<R>
   readonly selectors?: Selectors<R>
 }

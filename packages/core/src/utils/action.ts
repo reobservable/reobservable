@@ -20,7 +20,9 @@ export function getPayload(action: Action) {
  * @param {Action} action
  */
 export function actionSanitizer(action) {
-  return action[ALIAS] ? Object.assign({}, action, {
-    type: action[ALIAS]
-  }) : action
+  return action[ALIAS]
+    ? Object.assign({}, action, {
+        type: action[ALIAS]
+      })
+    : action
 }

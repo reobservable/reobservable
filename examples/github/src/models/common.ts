@@ -10,7 +10,7 @@ export enum Order {
 }
 
 export interface Pagination {
-  page: number,
-  pageSize: number,
+  page: number
+  pageSize: number
   total: number
 }

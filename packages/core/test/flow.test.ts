@@ -11,24 +11,24 @@ import Model from '../src/types/Model'
 import end from '../src/operators/end'
 
 interface UserState {
-  list: User[],
+  list: User[]
   current: number
 }
 
 interface PostState {
-  list: Post[],
+  list: Post[]
   current: number
 }
 
 interface User {
-  id: number,
-  name: string,
+  id: number
+  name: string
   age: number
 }
 
 interface Post {
-  id: number,
-  title: string,
+  id: number
+  title: string
   content: string
 }
 
@@ -41,7 +41,7 @@ const user: Model<UserState> = {
   flows: {
     throwError(flow$) {
       return flow$.pipe(
-        map(({payload}) => {
+        map(({ payload }) => {
           if (payload.throw) {
             throw Error('error')
           } else {
@@ -76,15 +76,26 @@ const post: Model<PostState> = {
         end(() => ({
           type: 'post/fetchSuccess',
           payload: {
-            list: [{
-              id: 1, title: '#1', content: '#1 content'
-            }, {
-              id: 2, title: '#2', content: '#2 content'
-            }, {
-              id: 3, title: '#3', content: '#3 content'
-            }]
+            list: [
+              {
+                id: 1,
+                title: '#1',
+                content: '#1 content'
+              },
+              {
+                id: 2,
+                title: '#2',
+                content: '#2 content'
+              },
+              {
+                id: 3,
+                title: '#3',
+                content: '#3 content'
+              }
+            ]
           }
-      })))
+        }))
+      )
     }
   }
 }
@@ -114,7 +125,7 @@ describe('flow', () => {
     expect(loading.flows['post/fetch']).to.be.true
   })
 
-  it('should set loading false when flow end', (done) => {
+  it('should set loading false when flow end', done => {
     store.dispatch({
       type: 'post/fetch'
     })
@@ -135,7 +146,9 @@ describe('flow', () => {
     })
 
     const error = store.getState().error
-    expect(error.flows['user/throwError']).to.property('message').be.equal('error')
+    expect(error.flows['user/throwError'])
+      .to.property('message')
+      .be.equal('error')
   })
 
   it('should reset error when action retry', () => {
@@ -157,9 +170,9 @@ describe('flow', () => {
     expect(error.flows['user/throwError']).to.be.null
   })
 
-  it('should not stop current flow when other flow throw error', (done) => {
+  it('should not stop current flow when other flow throw error', done => {
     store.dispatch({
-       type: 'user/throwError'
+      type: 'user/throwError'
     })
 
     store.dispatch({

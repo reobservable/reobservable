@@ -6,7 +6,15 @@
 import * as moment from 'moment'
 import { isEqual } from 'lodash/fp'
 import { timer, merge, Observable } from 'rxjs'
-import { map, combineLatest, distinctUntilChanged, switchMap, startWith, takeUntil, mapTo } from 'rxjs/operators'
+import {
+  map,
+  combineLatest,
+  distinctUntilChanged,
+  switchMap,
+  startWith,
+  takeUntil,
+  mapTo
+} from 'rxjs/operators'
 import { createSelector } from 'reselect'
 import { PaginationProps } from 'antd/lib/pagination'
 import { Model, NOTIFICATION_LEVEL, getService } from '@reobservable/core'
@@ -15,39 +23,39 @@ import { Order, Pagination } from '@models/common'
 import { ApiServiceFunc } from '@services/types'
 
 export interface Repo {
-  id: number,
-  name: string,
-  full_name: string,
-  html_url: string,
-  url: string,
-  homepage: string,
+  id: number
+  name: string
+  full_name: string
+  html_url: string
+  url: string
+  homepage: string
   updated_at: string
 }
 
 export interface RepoState {
-  list: Repo[],
-  pagination: Pagination,
-  sort: string,
-  isSilentLoading: boolean,
+  list: Repo[]
+  pagination: Pagination
+  sort: string
+  isSilentLoading: boolean
   query: string
 }
 
 export interface SearchParam {
-  q: string,
-  page: number,
-  per_page: number,
-  sort: string,
+  q: string
+  page: number
+  per_page: number
+  sort: string
   order: Order
 }
 
 export interface SearchResp {
-  total_count: number,
+  total_count: number
   items: Repo[]
 }
 
 const showTotal = total => `共 ${total} 条`
 
-const repo: Model<RepoState, {repo: RepoState}> = {
+const repo: Model<RepoState, { repo: RepoState }> = {
   name: 'repo',
   state: {
     list: [],
@@ -62,7 +70,7 @@ const repo: Model<RepoState, {repo: RepoState}> = {
   },
   reducers: {
     startPolling(state) {
-      return {...state, isSilentLoading: false}
+      return { ...state, isSilentLoading: false }
     },
     fetchSuccess(state, payload) {
       return {
@@ -88,9 +96,13 @@ const repo: Model<RepoState, {repo: RepoState}> = {
     }
   },
   selectors: {
-    pagination: createSelector<{repo: RepoState}, Pagination, PaginationProps>(
-      ({repo}) => repo.pagination,
-      ({total, page, pageSize}) => ({
+    pagination: createSelector<
+      { repo: RepoState },
+      Pagination,
+      PaginationProps
+    >(
+      ({ repo }) => repo.pagination,
+      ({ total, page, pageSize }) => ({
         current: page,
         pageSize,
         total,
@@ -102,7 +114,10 @@ const repo: Model<RepoState, {repo: RepoState}> = {
   flows: {
     fetch(flow$, action$, state$) {
       const service: ApiServiceFunc<SearchResp> = getService('api')
-      const stopPolling$ = action$.ofType('repo/stopPolling', 'repo/fetchError')
+      const stopPolling$ = action$.ofType(
+        'repo/stopPolling',
+        'repo/fetchError'
+      )
       const params$: Observable<SearchParam> = state$.pipe(
         map(state => {
           const { pagination, sort, query } = state.repo
@@ -123,23 +138,24 @@ const repo: Model<RepoState, {repo: RepoState}> = {
           const polling$ = timer(0, 30 * 60 * 1000).pipe(
             takeUntil(stopPolling$),
             switchMap(() => {
-              const [success$, error$] = service(
-                'repo/fetch',
-                fetch(params),
-                {level: NOTIFICATION_LEVEL.silent}
-              )
+              const [success$, error$] = service('repo/fetch', fetch(params), {
+                level: NOTIFICATION_LEVEL.silent
+              })
               return merge(
                 success$.pipe(
-                  map(({resp: {data}}) => ({
+                  map(({ resp: { data } }) => ({
                     type: 'rep/fetchSuccess',
                     payload: {
                       total: data.total_count,
                       list: data.items.map((item: Repo) => ({
                         ...item,
-                        displayUpdated: moment(item.updated_at).format('YYYY-MM-DD HH:mm')
+                        displayUpdated: moment(item.updated_at).format(
+                          'YYYY-MM-DD HH:mm'
+                        )
                       }))
                     }
-                }))),
+                  }))
+                ),
                 error$.pipe(
                   mapTo({
                     type: 'repo/fetchError',

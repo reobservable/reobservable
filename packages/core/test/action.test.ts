@@ -10,8 +10,10 @@ import { Action } from '../src/types/action'
 
 describe('action', () => {
   it('should payload be {} when payload is nil', () => {
-    expect(getPayload({type: 'undefined payload'})).to.deep.equal({})
-    expect(getPayload({type: 'null payload`', payload: null})).to.deep.equal({})
+    expect(getPayload({ type: 'undefined payload' })).to.deep.equal({})
+    expect(getPayload({ type: 'null payload`', payload: null })).to.deep.equal(
+      {}
+    )
   })
 
   it('should support action alias', () => {
@@ -25,7 +27,7 @@ describe('action', () => {
       type: 'FOO'
     })
 
-    expect(actionSanitizer({type: 'foo', payload: {}})).to.deep.include({
+    expect(actionSanitizer({ type: 'foo', payload: {} })).to.deep.include({
       type: 'foo'
     })
   })

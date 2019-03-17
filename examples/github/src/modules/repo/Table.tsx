@@ -12,25 +12,30 @@ import { LoadingState, getSelectors, Symbols } from '@reobservable/core'
 import { Repo, RepoState } from '@models/repo'
 
 interface StateMapper {
-  repo: RepoState,
+  repo: RepoState
   loading: LoadingState
 }
 
-const columns: ColumnProps<Repo>[] = [{
-  key: '_rank',
-  title: '排名',
-  width: 150,
-  render: (text: string, record, index: number) => index + 1
-}, {
-  key: 'name',
-  title: 'Repo',
-  dataIndex: 'name',
-  render: (text: string, record) => {
-    return (
-      <a href={record.homepage || record.html_url} target='_blank'>{text}</a>
-    )
+const columns: ColumnProps<Repo>[] = [
+  {
+    key: '_rank',
+    title: '排名',
+    width: 150,
+    render: (text: string, record, index: number) => index + 1
+  },
+  {
+    key: 'name',
+    title: 'Repo',
+    dataIndex: 'name',
+    render: (text: string, record) => {
+      return (
+        <a href={record.homepage || record.html_url} target='_blank'>
+          {text}
+        </a>
+      )
+    }
   }
-}]
+]
 
 const Table: React.SFC<TableProps<Repo> & DispatchProp> = props => {
   const { dataSource, pagination, loading, dispatch } = props
@@ -63,7 +68,7 @@ const Table: React.SFC<TableProps<Repo> & DispatchProp> = props => {
 
 const mapStateToProps = (state: StateMapper): TableProps<Repo> => {
   const { repo, loading } = state
-  return  {
+  return {
     dataSource: repo.list,
     pagination: getSelectors('repo').pagination(state),
     loading: repo.isSilentLoading ? false : loading.services['repo/fetch']

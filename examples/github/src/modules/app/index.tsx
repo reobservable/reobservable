@@ -39,28 +39,26 @@ class App extends React.Component<Props> {
               </Menu.Item>
               <Menu.Item key='/repos'>
                 <Link to='/repos'>Repos</Link>
-                </Menu.Item>
+              </Menu.Item>
             </Menu>
           </Header>
-          <Content style={{padding: '0 50px', marginTop: 20 }}>
+          <Content style={{ padding: '0 50px', marginTop: 20 }}>
             <Layout style={{ padding: '24px 0', background: '#fff' }}>
               <Content style={{ padding: '0 24px', minHeight: 280 }}>
-                  <Route exact path='/' render={() => <Redirect to='/users' />} />
-                  <Route path='/users' component={User}/>
-                  <Route path='/repos' component={Repo}/>
+                <Route exact path='/' render={() => <Redirect to='/users' />} />
+                <Route path='/users' component={User} />
+                <Route path='/repos' component={Repo} />
               </Content>
             </Layout>
           </Content>
-          <Footer style={{ textAlign: 'center' }}>
-            Reobservable
-          </Footer>
+          <Footer style={{ textAlign: 'center' }}>Reobservable</Footer>
         </Layout>
       </ConnectedRouter>
-   )
+    )
   }
 }
 
-const mapStateToProps = ({router}: {router: RouterState}): Props => ({
+const mapStateToProps = ({ router }: { router: RouterState }): Props => ({
   path: router.location.pathname
 })
 

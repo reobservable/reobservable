@@ -5,7 +5,15 @@
  */
 import { isEqual } from 'lodash/fp'
 import { timer, Observable, merge } from 'rxjs'
-import { map, combineLatest, distinctUntilChanged, switchMap, startWith, takeUntil, mapTo } from 'rxjs/operators'
+import {
+  map,
+  combineLatest,
+  distinctUntilChanged,
+  switchMap,
+  startWith,
+  takeUntil,
+  mapTo
+} from 'rxjs/operators'
 import { createSelector } from 'reselect'
 import { PaginationProps } from 'antd/lib/pagination'
 import { Model, NOTIFICATION_LEVEL, getService } from '@reobservable/core'
@@ -14,38 +22,38 @@ import { Order, Pagination } from '@models/common'
 import { ApiServiceFunc } from '@services/types'
 
 export interface User {
-  login: string,
-  id: number,
-  avatar_url: string,
-  url: string,
+  login: string
+  id: number
+  avatar_url: string
+  url: string
   html_url: string
 }
 
 export interface UserState {
-  list: User[],
-  pagination: Pagination,
-  sort: string,
-  isSilentLoading: boolean,
+  list: User[]
+  pagination: Pagination
+  sort: string
+  isSilentLoading: boolean
   query: string
 }
 
 export interface SearchParam {
-  q: string,
-  language: string,
-  page: number,
-  per_page: number,
-  sort: string,
+  q: string
+  language: string
+  page: number
+  per_page: number
+  sort: string
   order: Order
 }
 
 export interface SearchResp {
-  total_count: number,
+  total_count: number
   items: User[]
 }
 
 const showTotal = total => `共 ${total} 条`
 
-const user: Model<UserState, {user: UserState}> = {
+const user: Model<UserState, { user: UserState }> = {
   name: 'user',
   state: {
     list: [],
@@ -59,9 +67,13 @@ const user: Model<UserState, {user: UserState}> = {
     query: ''
   },
   selectors: {
-    pagination: createSelector<{user: UserState}, Pagination, PaginationProps>(
-      ({user}) => user.pagination,
-      ({total, page, pageSize}) => ({
+    pagination: createSelector<
+      { user: UserState },
+      Pagination,
+      PaginationProps
+    >(
+      ({ user }) => user.pagination,
+      ({ total, page, pageSize }) => ({
         current: page,
         pageSize,
         total,
@@ -72,7 +84,7 @@ const user: Model<UserState, {user: UserState}> = {
   },
   reducers: {
     startPolling(state) {
-      return {...state, isSilentLoading: false}
+      return { ...state, isSilentLoading: false }
     },
     fetchSuccess(state, payload) {
       return {
@@ -100,9 +112,12 @@ const user: Model<UserState, {user: UserState}> = {
   flows: {
     fetch(flow$, action$, state$) {
       const service: ApiServiceFunc<SearchResp> = getService('api')
-      const stopPolling$ = action$.ofType('user/stopPolling', 'user/fetchError')
+      const stopPolling$ = action$.ofType(
+        'user/stopPolling',
+        'user/fetchError'
+      )
       const params$: Observable<SearchParam> = state$.pipe(
-        map(({user}: {user: UserState}) => {
+        map(({ user }: { user: UserState }) => {
           const { pagination, sort, query } = user
           return {
             q: `${query ? query + ' ' : ''}language:javascript`,
@@ -122,20 +137,19 @@ const user: Model<UserState, {user: UserState}> = {
           const polling$ = timer(0, 15 * 1000).pipe(
             takeUntil(stopPolling$),
             switchMap(() => {
-              const [success$, error$] = service(
-                'user/fetch',
-                fetch(params),
-                {level: NOTIFICATION_LEVEL.all}
-              )
+              const [success$, error$] = service('user/fetch', fetch(params), {
+                level: NOTIFICATION_LEVEL.all
+              })
               return merge(
                 success$.pipe(
-                  map(({resp: {data}}) => ({
+                  map(({ resp: { data } }) => ({
                     type: 'user/fetchSuccess',
                     payload: {
                       total: data.total_count,
                       list: data.items
                     }
-                }))),
+                  }))
+                ),
                 error$.pipe(
                   mapTo({
                     type: 'user/fetchError',

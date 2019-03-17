@@ -14,7 +14,7 @@ describe('#init', () => {
         models: {
           user: { name: 'user', state: {} },
           duplicatedUser: { name: 'user', state: {} }
-       }
+        }
       })
     }).to.throw('model user has been defined')
   })
@@ -27,11 +27,15 @@ describe('#init', () => {
 
   it('should support custom notification', () => {
     const notification = {
-      info(msg) { return msg },
-      success(msg) { return msg }
+      info(msg) {
+        return msg
+      },
+      success(msg) {
+        return msg
+      }
     }
 
-    const user: Model<{name: string}> = {
+    const user: Model<{ name: string }> = {
       name: 'user'
     }
 
@@ -48,11 +52,15 @@ describe('#init', () => {
 
   it('should not notificate when message is nil', () => {
     const notification = {
-      info(msg) { return msg },
-      success(msg) { return msg }
+      info(msg) {
+        return msg
+      },
+      success(msg) {
+        return msg
+      }
     }
 
-    const user: Model<{name: string}> = {
+    const user: Model<{ name: string }> = {
       name: 'user'
     }
 
