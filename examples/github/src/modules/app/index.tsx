@@ -9,7 +9,7 @@ import { Route, Redirect } from 'react-router'
 import { Link } from 'react-router-dom'
 import { ConnectedRouter, RouterState } from 'connected-react-router'
 import { Layout, Menu } from 'antd'
-import createHistory from 'history/createHashHistory'
+import { createHashHistory } from 'history'
 import User from '@modules/user'
 import Repo from '@modules/repo'
 
@@ -17,7 +17,7 @@ interface Props {
   path: string
 }
 
-const history = createHistory()
+const history = createHashHistory()
 
 const { Header, Content, Footer } = Layout
 
