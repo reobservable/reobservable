@@ -15,11 +15,11 @@ import userModel from '@models/user'
 import repoModel from '@models/repo'
 import { ApiService } from '@services/types'
 
-import createHistory from 'history/createHashHistory'
+import { createHashHistory } from 'history'
 
 import 'antd/dist/antd.css'
 
-const history = createHistory()
+const history = createHashHistory()
 
 const store = init({
   redux: {
